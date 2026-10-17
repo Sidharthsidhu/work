@@ -133,7 +133,6 @@
     /* Plan a trip */
     .plan-row { display: flex; justify-content: center; margin: -8px 0 24px; }
     .plan-btn, .pf-actions .btn { border: 0; font: inherit; font-weight: 600; cursor: pointer; }
-    .plan-btn[hidden] { display: none; }
     dialog.plan {
       width: min(480px, calc(100% - 32px)); max-height: calc(100% - 32px); overflow-y: auto; padding: 24px;
       border: 1px solid var(--border); border-radius: 18px; background: var(--surface); color: var(--text); box-shadow: var(--shadow);
@@ -150,6 +149,13 @@
     .plan textarea { resize: vertical; }
     .plan input:focus-visible, .plan select:focus-visible, .plan textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
     .pf-row { display: grid; grid-template-columns: minmax(0, 1fr) 110px; gap: 12px; }
+    .pf-note { margin: 0; font-size: 0.85rem; color: var(--muted); }
+    .trip-local { margin-top: auto; padding-top: 10px; display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--muted); }
+    .trip-del {
+      font: inherit; font-size: 0.8rem; font-weight: 600; padding: 4px 12px; border-radius: 999px; cursor: pointer;
+      border: 1px solid var(--border); background: transparent; color: var(--muted);
+    }
+    .trip-del.sure { border-color: #e5484d; color: #e5484d; }
     .pf-msg { margin: 0; min-height: 1.4em; font-size: 0.9rem; color: var(--muted); }
     .pf-msg.err { color: #e5484d; }
     .pf-actions { display: flex; justify-content: flex-end; gap: 8px; }
@@ -329,7 +335,7 @@
           <button data-filter="upcoming">Upcoming</button>
           <button data-filter="done">Done</button>
         </div>
-        <div class="plan-row"><button type="button" class="btn plan-btn" id="plan-btn" hidden>+ Plan a trip</button></div>
+        <div class="plan-row"><button type="button" class="btn plan-btn" id="plan-btn">+ Plan a trip</button></div>
         <div class="trips" id="trip-list"></div>
       </div>
     </section>
@@ -373,7 +379,7 @@
       </div>
       <label>One-line note<textarea id="pf-note" rows="2" maxlength="140" placeholder="What's the plan?"></textarea></label>
       <label>Photo (optional)<input id="pf-photo" type="file" accept="image/*"></label>
-      <label>Group passcode<input id="pf-pass" type="password" autocomplete="off" required></label>
+      <p class="pf-note">Trips you add are saved on this phone or computer only.</p>
       <p class="pf-msg" id="pf-msg" role="status"></p>
       <div class="pf-actions">
         <button type="button" class="btn ghost" id="pf-cancel">Cancel</button>
@@ -389,10 +395,6 @@
     // A trip can show several photos in turn: photos: ["photos/a.jpg", "photos/b.jpg"].
 
     const INSTAGRAM_URL = "https://www.instagram.com/dev_oopss/";
-
-    // Web app link of the Google Apps Script that stores new trips (see TRIP-PLANNER-SETUP.md).
-    // While this is empty, the "Plan a trip" button stays hidden.
-    const TRIPS_API = "";
 
     const crew = [
       { name: "Sidharth", role: "Trip planner",     emoji: "🗺️", color: "#ffd6c9", photo: "photos/sidharth.jpg" },
@@ -449,6 +451,7 @@
             <h3>${esc(t.title)}</h3>
             <div class="date">📍 ${esc(t.place)} · ${fmt(t.date)}</div>
             <p>${esc(t.note)}</p>
+            ${t.local ? `<div class="trip-local"><span>📱 Saved on this device</span><button type="button" class="trip-del" data-id="${esc(t.id)}">Remove</button></div>` : ""}
           </div>
         </article>`;
       }).join("") || `<p style="text-align:center;color:var(--muted)">Nothing here yet — time to plan one!</p>`;
@@ -695,25 +698,36 @@
     }
     wait = performance.now() + 1200;
     requestAnimationFrame(frame);
-    // ===== Plan a trip (new trips are saved to the group's Google Sheet) =====
+    // ===== Plan a trip (saved in this browser only) =====
     const planBtn = document.getElementById("plan-btn");
     const dialog = document.getElementById("plan-dialog");
     const form = document.getElementById("plan-form");
     const saveBtn = document.getElementById("pf-save");
     const msg = document.getElementById("pf-msg");
     const palette = ["#cfeee0", "#d6ecff", "#fff0c2", "#ffe0d1", "#e3dcff", "#ffd1dc"];
+    const LOCAL_KEY = "devoopss-trips";
     const field = id => document.getElementById(id).value.trim();
     const say = (text, isError) => {
       msg.textContent = text;
       msg.classList.toggle("err", !!isError);
     };
-    const fromSheet = t => ({
+    const loadSaved = () => {
+      try {
+        return JSON.parse(localStorage.getItem(LOCAL_KEY)) || [];
+      } catch {
+        return [];
+      }
+    };
+    const storeSaved = list => localStorage.setItem(LOCAL_KEY, JSON.stringify(list));
+    const fromSaved = t => ({
+      id: String(t.id),
+      local: true,
       title: String(t.title || ""),
       place: String(t.place || ""),
       date: /^\d{4}-\d{2}-\d{2}$/.test(t.date) ? t.date : "",
       emoji: String(t.emoji || "🧳"),
       note: String(t.note || ""),
-      photo: /^https:\/\//.test(t.photo || "") ? t.photo : "",
+      photo: /^data:image\/jpeg;base64,/.test(t.photo || "") ? t.photo : "",
       color: palette[trips.length % palette.length],
     });
     const refreshTrips = () => {
@@ -721,33 +735,24 @@
       renderNext();
     };
 
-    // Phone photos are large; shrink them before uploading
+    // Phone photos are large; shrink them so they fit in the browser's storage
     const shrink = file => new Promise((resolve, reject) => {
       const img = new Image();
       img.onload = () => {
-        const k = Math.min(1, 1280 / Math.max(img.width, img.height));
+        const k = Math.min(1, 1000 / Math.max(img.width, img.height));
         const c = document.createElement("canvas");
         c.width = Math.round(img.width * k);
         c.height = Math.round(img.height * k);
         c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
         URL.revokeObjectURL(img.src);
-        resolve(c.toDataURL("image/jpeg", 0.82));
+        resolve(c.toDataURL("image/jpeg", 0.78));
       };
       img.onerror = () => reject(new Error("That photo couldn't be read. Try a JPG or PNG."));
       img.src = URL.createObjectURL(file);
     });
 
-    if (TRIPS_API) {
-      planBtn.hidden = false;
-      fetch(TRIPS_API)
-        .then(r => r.json())
-        .then(data => {
-          if (!data.ok) return;
-          data.trips.forEach(t => trips.push(fromSheet(t)));
-          refreshTrips();
-        })
-        .catch(() => {}); // Google unreachable: the built-in trips still show
-    }
+    loadSaved().forEach(t => trips.push(fromSaved(t)));
+    refreshTrips();
 
     planBtn.addEventListener("click", () => {
       form.reset();
@@ -759,17 +764,16 @@
 
     form.addEventListener("submit", async e => {
       e.preventDefault();
-      if (!field("pf-title") || !field("pf-place") || !field("pf-date") || !field("pf-pass")) {
-        say("Fill in the trip name, place, date and passcode.", true);
+      if (!field("pf-title") || !field("pf-place") || !field("pf-date")) {
+        say("Fill in the trip name, place and date.", true);
         return;
       }
       saveBtn.disabled = true;
       say("Saving…");
       try {
         const file = document.getElementById("pf-photo").files[0];
-        if (file) say("Uploading photo…");
-        const body = {
-          passcode: field("pf-pass"),
+        const saved = {
+          id: Date.now().toString(36),
           title: field("pf-title"),
           place: field("pf-place"),
           date: field("pf-date"),
@@ -777,19 +781,39 @@
           note: field("pf-note"),
           photo: file ? await shrink(file) : "",
         };
-        // text/plain keeps the request simple enough for Google Apps Script to accept
-        const res = await fetch(TRIPS_API, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(body) });
-        const data = await res.json();
-        if (!data.ok) throw new Error(data.error === "Wrong passcode" ? "That passcode isn't right. Check the group chat." : data.error);
-        trips.push(fromSheet(data.trip));
+        try {
+          storeSaved([...loadSaved(), saved]);
+        } catch {
+          throw new Error(file
+            ? "This browser is out of room for photos. Save it without a photo, or remove an older trip you added."
+            : "This browser won't let the site save trips (private mode can do this).");
+        }
+        trips.push(fromSaved(saved));
         refreshTrips();
         dialog.close();
         burst(innerWidth / 2, innerHeight / 2);
       } catch (err) {
-        say(err instanceof TypeError ? "Couldn't reach the trip sheet. Check your internet and try again." : err.message, true);
+        say(err.message, true);
       } finally {
         saveBtn.disabled = false;
       }
+    });
+
+    // Remove a trip added on this device (tap twice to confirm)
+    document.getElementById("trip-list").addEventListener("click", e => {
+      const btn = e.target.closest(".trip-del");
+      if (!btn) return;
+      if (!btn.classList.contains("sure")) {
+        btn.classList.add("sure");
+        btn.textContent = "Tap again to remove";
+        return;
+      }
+      const id = btn.dataset.id;
+      try {
+        storeSaved(loadSaved().filter(t => String(t.id) !== id));
+      } catch {}
+      trips.splice(trips.findIndex(t => t.local && t.id === id), 1);
+      refreshTrips();
     });
   </script>
 </body>
