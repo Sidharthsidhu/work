@@ -168,12 +168,90 @@ section.block { padding-block: clamp(56px, 8vw, 96px); border-top: 1px solid var
 .copy { border: 1px solid var(--line); background: transparent; color: var(--fg); font: 500 0.8rem var(--body); padding: 6px 12px; border-radius: 6px; cursor: pointer; }
 .copy:hover { border-color: var(--accent); color: var(--accent); }
 
+/* ---------- Motion ---------- */
+/* Scroll progress bar under the header */
+.progress { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--accent); transform-origin: 0 50%; transform: scaleX(0); }
+@supports (animation-timeline: scroll()) {
+  .progress { animation: grow linear both; animation-timeline: scroll(root); }
+}
+@keyframes grow { to { transform: scaleX(1); } }
+
+/* Hero: drifting circuit-board dot grid */
+.hero { position: relative; overflow: hidden; isolation: isolate; }
+.hero::before {
+  content: ""; position: absolute; inset: -40px; z-index: -1; pointer-events: none;
+  background-image: radial-gradient(color-mix(in srgb, var(--accent) 22%, transparent) 1.2px, transparent 1.4px);
+  background-size: 28px 28px;
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 75% 40%, #000 20%, transparent 75%);
+          mask-image: radial-gradient(ellipse 70% 60% at 75% 40%, #000 20%, transparent 75%);
+  animation: drift 24s linear infinite;
+}
+@keyframes drift { to { transform: translate(28px, 28px); } }
+
+/* Hero: staggered load sequence */
+@keyframes rise { from { opacity: 0; transform: translateY(18px); } }
+@keyframes wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes slide-in { from { opacity: 0; transform: translateX(28px); } }
+.hero .eyebrow { animation: rise .6s cubic-bezier(.2,.7,.2,1) both; }
+.hero h1 { animation: wipe .9s cubic-bezier(.7,0,.2,1) .15s both; }
+.hero .role { animation: rise .6s cubic-bezier(.2,.7,.2,1) .55s both; }
+.hero .lede { animation: rise .6s cubic-bezier(.2,.7,.2,1) .7s both; }
+.hero .actions { animation: rise .6s cubic-bezier(.2,.7,.2,1) .85s both; }
+.spec { animation: slide-in .7s cubic-bezier(.2,.7,.2,1) .4s both; }
+
+/* Spec card: boots up line by line, like a POST screen */
+@keyframes boot { from { opacity: 0; transform: translateX(-8px); } }
+.spec .row { animation: boot .35s ease-out both; }
+.spec .row:nth-child(1) { animation-delay: .9s; }
+.spec .row:nth-child(2) { animation-delay: 1.05s; }
+.spec .row:nth-child(3) { animation-delay: 1.2s; }
+.spec .row:nth-child(4) { animation-delay: 1.35s; }
+.spec .row:nth-child(5) { animation-delay: 1.5s; }
+.spec .row:nth-child(6) { animation-delay: 1.65s; }
+.spec .row:nth-child(7) { animation-delay: 1.8s; }
+.cursor { display: inline-block; width: .55em; height: 1em; margin-left: 4px; vertical-align: -2px; background: var(--accent); animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* Button arrow nudge */
+.btn .arrow { transition: transform .2s ease; }
+.btn:hover .arrow { transform: translateX(4px); }
+
+/* Workflow diagrams: a signal travels through each step */
+.flow { display: flex; align-items: center; gap: 8px; }
+.flow .step { padding: 2px 6px; border-radius: 4px; animation: signal 4s ease-in-out infinite; }
+.flow .sep { color: var(--muted); }
+.flow .step:nth-of-type(2) { animation-delay: .8s; }
+.flow .step:nth-of-type(3) { animation-delay: 1.6s; }
+.flow .step:nth-of-type(4) { animation-delay: 2.4s; }
+.flow .step:nth-of-type(5) { animation-delay: 3.2s; }
+@keyframes signal { 0%, 30%, 100% { background: transparent; color: var(--fg); } 10%, 20% { background: var(--accent); color: var(--bg); } }
+
+/* Card hover: lift + glow */
+.track, .cred { transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease; }
+.project:hover, .track:hover, .cred:hover { box-shadow: 0 12px 30px -16px color-mix(in srgb, var(--accent) 45%, transparent); }
+.track:hover, .cred:hover { transform: translateY(-2px); border-color: var(--accent); }
+.chips li { transition: border-color .15s ease, color .15s ease, transform .15s ease; }
+.chips li:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+
+/* Scroll reveal (only where the browser supports scroll-driven animation; content is fully visible otherwise) */
+@supports (animation-timeline: view()) {
+  .sec-head, .track, .project, .job, .skill, .cred, .contact h2, .contact .lede, .line {
+    animation: reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 55%;
+  }
+  .job .when { animation: grow-x linear both; animation-timeline: view(); animation-range: entry 10% entry 70%; }
+}
+@keyframes reveal { from { opacity: 0; transform: translateY(32px) scale(.98); } }
+@keyframes grow-x { from { opacity: 0; transform: translateX(-20px); } }
+
 footer { border-top: 1px solid var(--line); }
 footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; padding-block: 24px; color: var(--muted); font: 400 0.82rem var(--mono); }
 </style>
 
 <header class="top">
   <div class="wrap">
+    <span class="progress" aria-hidden="true"></span>
     <a class="brand" href="#top">sidharth<span>.k</span></a>
     <nav class="nav" aria-label="Sections">
       <a href="#about">About</a>
@@ -197,7 +275,7 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
         <p class="role"><b>.NET developer</b> who also knows the hardware it runs on.</p>
         <p class="lede">I build and maintain business web applications with ASP.NET MVC, C#, VB.NET and SQL Server. Before writing software full time, I spent two years fixing, building and networking the machines people work on. I take real business requirements and turn them into software that is reliable and easy to support.</p>
         <div class="actions">
-          <a class="btn primary" href="#work">See my work</a>
+          <a class="btn primary" href="#work">See my work <span class="arrow" aria-hidden="true">→</span></a>
           <a class="btn" href="#contact">Get in touch</a>
         </div>
       </div>
@@ -211,7 +289,7 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
           <div class="row"><dt>In IT</dt><dd>since Mar 2021 <span class="hl">(5+ yrs)</span></dd></div>
           <div class="row"><dt>Location</dt><dd>Nilambur, Malappuram, Kerala</dd></div>
           <div class="row"><dt>Speaks</dt><dd>English · Malayalam · Hindi</dd></div>
-          <div class="row"><dt>Learning</dt><dd>Microsoft Azure <span class="warn">[in progress]</span></dd></div>
+          <div class="row"><dt>Learning</dt><dd>Microsoft Azure <span class="warn">[in progress]</span><span class="cursor" aria-hidden="true"></span></dd></div>
         </dl>
       </aside>
     </div>
@@ -251,7 +329,7 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
           <span class="kind">AI · Document intelligence</span>
           <h3>PDF &amp; image data extraction</h3>
           <p>A feature that reads uploaded PDF files and images, pulls out the data that matters, and converts it into structured JSON that other parts of the system can use directly. It replaces manual data entry.</p>
-          <div class="flow">upload (PDF / image) → extract → structure → JSON → downstream modules</div>
+          <div class="flow"><span class="step">upload PDF / image</span><span class="sep">→</span><span class="step">extract</span><span class="sep">→</span><span class="step">structure</span><span class="sep">→</span><span class="step">JSON</span><span class="sep">→</span><span class="step">downstream modules</span></div>
           <ul class="chips"><li>AI extraction</li><li>JSON</li><li>ASP.NET MVC</li></ul>
         </article>
         <article class="project">
@@ -264,7 +342,7 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
           <span class="kind">Workflow modules</span>
           <h3>Service provider management</h3>
           <p>End-to-end service workflows for clients, covering service registration, assignment, tracking and delivery. I developed and maintain these modules.</p>
-          <div class="flow">register → assign → track → deliver</div>
+          <div class="flow"><span class="step">register</span><span class="sep">→</span><span class="step">assign</span><span class="sep">→</span><span class="step">track</span><span class="sep">→</span><span class="step">deliver</span></div>
           <ul class="chips"><li>ASP.NET MVC</li><li>JavaScript</li><li>SQL</li></ul>
         </article>
         <article class="project">
