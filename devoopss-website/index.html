@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dev_oopss Trips</title>
-  <meta name="site-version" content="2026-10-17.1">
+  <meta name="site-version" content="2026-10-17.2">
   <meta name="description" content="Dev_oopss — six friends escaping office work, one trip and staycation at a time.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -162,6 +162,55 @@
     .pf-actions { display: flex; justify-content: flex-end; gap: 8px; }
     .pf-actions .btn.ghost { margin-left: 0; border: 1px solid var(--border); }
     .pf-actions .btn:disabled { opacity: 0.6; cursor: progress; }
+
+
+    /* Trip gallery */
+    .gallery-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 8px; }
+    .g-thumb { position: relative; padding: 0; border: 0; border-radius: 8px; overflow: hidden; aspect-ratio: 1; cursor: pointer; background: var(--bg); }
+    .g-thumb img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+    .g-thumb:hover img { transform: scale(1.08); }
+    .g-thumb .play, .g-thumb .more { position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font-weight: 700; }
+    .g-thumb .play { font-size: 1.3rem; text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6); }
+    .g-thumb .more { background: rgba(0, 0, 0, 0.5); font-size: 1rem; }
+    .gallery-open {
+      align-self: flex-start; margin-top: 8px; padding: 6px 14px; border-radius: 999px; cursor: pointer;
+      font: inherit; font-size: 0.85rem; font-weight: 600; border: 1px solid var(--border); background: var(--bg); color: var(--text);
+    }
+    .gallery-open:hover { border-color: var(--accent); color: var(--accent); }
+
+    dialog.viewer {
+      width: 100vw; height: 100vh; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0;
+      border: 0; background: rgba(10, 11, 15, 0.97); color: #fff; overflow: hidden;
+    }
+    dialog.viewer[open] { display: grid; grid-template-rows: auto minmax(0, 1fr); }
+    dialog.viewer::backdrop { background: rgba(10, 11, 15, 0.97); }
+    .v-top {
+      display: flex; align-items: center; gap: 12px; font-weight: 600;
+      padding: max(12px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 12px max(16px, env(safe-area-inset-left));
+    }
+    .v-count { color: rgba(255, 255, 255, 0.7); font-weight: 500; font-variant-numeric: tabular-nums; }
+    .v-close, .v-nav {
+      display: grid; place-items: center; border: 0; border-radius: 50%; cursor: pointer;
+      background: rgba(255, 255, 255, 0.14); color: #fff; font: inherit; line-height: 1;
+    }
+    .v-close { margin-left: auto; width: 40px; height: 40px; font-size: 1.1rem; }
+    .v-close:hover, .v-nav:hover { background: rgba(255, 255, 255, 0.26); }
+    .v-stage { position: relative; min-height: 0; touch-action: pan-y; }
+    .v-stage img, .v-stage video {
+      position: absolute; object-fit: contain; animation: vIn 0.3s ease; user-select: none;
+      top: 0; bottom: max(16px, env(safe-area-inset-bottom)); left: max(8px, env(safe-area-inset-left)); right: max(8px, env(safe-area-inset-right));
+      width: calc(100% - 2 * max(8px, env(safe-area-inset-left))); height: calc(100% - max(16px, env(safe-area-inset-bottom)));
+    }
+    .v-stage iframe {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: min(calc(100% - 16px), 960px); aspect-ratio: 16 / 9; height: auto; max-height: calc(100% - 16px); border: 0; border-radius: 6px;
+    }
+    .v-nav { position: absolute; top: 50%; width: 48px; height: 48px; margin-top: -24px; font-size: 1.8rem; }
+    .v-prev { left: max(12px, env(safe-area-inset-left)); }
+    .v-next { right: max(12px, env(safe-area-inset-right)); }
+    .v-nav[hidden] { display: none; }
+    @media (max-width: 560px) { .v-nav { width: 40px; height: 40px; margin-top: -20px; font-size: 1.5rem; background: rgba(0, 0, 0, 0.35); } }
+    @keyframes vIn { from { opacity: 0; transform: scale(0.97); } }
 
     /* Rules */
     .rules { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
@@ -364,6 +413,17 @@
     </div>
   </footer>
 
+  <dialog class="viewer" id="viewer" aria-label="Trip photos and videos">
+    <div class="v-top">
+      <span id="v-title"></span>
+      <span class="v-count" id="v-count"></span>
+      <button type="button" class="v-close" id="v-close" aria-label="Close">✕</button>
+    </div>
+    <div class="v-stage" id="v-stage"></div>
+    <button type="button" class="v-nav v-prev" id="v-prev" aria-label="Previous">‹</button>
+    <button type="button" class="v-nav v-next" id="v-next" aria-label="Next">›</button>
+  </dialog>
+
   <dialog class="plan" id="plan-dialog" aria-labelledby="plan-title">
     <form id="plan-form" novalidate>
       <h2 id="plan-title">Plan a trip ✈️</h2>
@@ -394,6 +454,7 @@
     // Change names, emojis and trips here. Dates use YYYY-MM-DD.
     // To show a photo instead of an emoji, put it in the photos/ folder and add photo: "photos/name.jpg".
     // A trip can show several photos in turn: photos: ["photos/a.jpg", "photos/b.jpg"].
+    // Trip memories go in gallery: ["photos/gallery/goa/01.jpg", "photos/gallery/goa/02.mp4", "youtube:VIDEO_ID"].
 
     const INSTAGRAM_URL = "https://www.instagram.com/dev_oopss/";
 
@@ -411,9 +472,11 @@
       { title: "Wayanad trip", place: "Wayanad", date: "2026-11-21", emoji: "🌿", color: "#cfeee0", photo: "photos/trip-wayanad.jpg",
         note: "Our next escape. Plans are on in the group chat." },
       { title: "Varkala trip", place: "Varkala", date: "2026-09-26", emoji: "🛶", color: "#d6ecff", photo: "photos/trip-varkala.jpg",
-        note: "Trip number two: kayaking through the mangroves at Varkala." },
+        note: "Trip number two: kayaking through the mangroves at Varkala.",
+        gallery: ["photos/gallery/varkala/01.jpg"] },
       { title: "Munnar staycation", place: "Munnar", date: "2026-07-04", emoji: "🏔️", color: "#fff0c2", photo: "photos/trip-munnar.jpg",
-        note: "Where it all started: our first trip together, a staycation up in Munnar." },
+        note: "Where it all started: our first trip together, a staycation up in Munnar.",
+        gallery: ["photos/gallery/munnar/01.jpg"] },
     ];
 
     // ====== END OF EDIT PART ======
@@ -436,6 +499,25 @@
         <div class="role">${m.role}</div>
       </div>`).join("");
 
+    // Trip galleries: photos/gallery/<trip>/NN.jpg or .mp4, with square previews in thumbs/,
+    // or "youtube:VIDEO_ID" for longer videos kept on YouTube
+    const mediaKind = src => src.startsWith("youtube:") ? "youtube" : /\.(mp4|webm)$/i.test(src) ? "video" : "image";
+    const thumbOf = src => mediaKind(src) === "youtube"
+      ? `https://i.ytimg.com/vi/${encodeURIComponent(src.slice(8))}/hqdefault.jpg`
+      : src.replace(/([^/]+)\.\w+$/, "thumbs/$1.jpg");
+    const galleryHtml = t => {
+      const g = t.gallery || [];
+      if (!g.length) return "";
+      const id = trips.indexOf(t);
+      const photos = g.filter(s => mediaKind(s) === "image").length, videos = g.length - photos;
+      const label = [photos && `📸 ${photos} photo${photos > 1 ? "s" : ""}`, videos && `🎬 ${videos} video${videos > 1 ? "s" : ""}`].filter(Boolean).join(" · ");
+      const strip = g.length < 2 ? "" : `<div class="gallery-strip">${g.slice(0, 4).map((s, i) => `
+        <button type="button" class="g-thumb" data-trip="${id}" data-i="${i}" aria-label="Open ${i + 1} of ${g.length}">
+          <img src="${esc(thumbOf(s))}" alt="" loading="lazy">${mediaKind(s) === "image" ? "" : `<span class="play">▶</span>`}${i === 3 && g.length > 4 ? `<span class="more">+${g.length - 4}</span>` : ""}
+        </button>`).join("")}</div>`;
+      return `${strip}<button type="button" class="gallery-open" data-trip="${id}" data-i="0">${label} · View</button>`;
+    };
+
     let currentFilter = "all";
     function renderTrips(filter) {
       currentFilter = filter;
@@ -453,6 +535,7 @@
             <h3>${esc(t.title)}</h3>
             <div class="date">📍 ${esc(t.place)} · ${fmt(t.date)}</div>
             <p>${esc(t.note)}</p>
+            ${galleryHtml(t)}
             ${t.local ? `<div class="trip-local"><span>📱 Saved on this device</span>${up ? `<button type="button" class="trip-del" data-id="${esc(t.id)}">Remove</button>` : ""}</div>` : ""}
           </div>
         </article>`;
@@ -828,6 +911,66 @@
       shownDay = day;
       refreshTrips();
     }, 60000);
+    // ===== Full-screen photo & video viewer =====
+    const viewer = document.getElementById("viewer");
+    const stage = document.getElementById("v-stage");
+    let vItems = [], vIndex = 0, vTitle = "";
+    function showMedia() {
+      const src = vItems[vIndex], kind = mediaKind(src);
+      stage.innerHTML = kind === "image"
+        ? `<img src="${esc(src)}" alt="${esc(vTitle)}, ${vIndex + 1} of ${vItems.length}" draggable="false">`
+        : kind === "video"
+          ? `<video src="${esc(src)}" poster="${esc(thumbOf(src))}" controls playsinline preload="metadata"></video>`
+          : `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(src.slice(8))}" title="${esc(vTitle)} video" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+      document.getElementById("v-count").textContent = `${vIndex + 1} / ${vItems.length}`;
+      document.getElementById("v-prev").hidden = document.getElementById("v-next").hidden = vItems.length < 2;
+      // Load the neighbouring photos early so swiping feels instant
+      [vIndex - 1, vIndex + 1].forEach(i => {
+        const s = vItems[(i + vItems.length) % vItems.length];
+        if (mediaKind(s) === "image") new Image().src = s;
+      });
+    }
+    const step = d => {
+      vIndex = (vIndex + d + vItems.length) % vItems.length;
+      showMedia();
+    };
+    function openGallery(trip, start) {
+      vItems = trip.gallery;
+      vIndex = start;
+      vTitle = trip.title;
+      document.getElementById("v-title").textContent = trip.title;
+      showMedia();
+      viewer.showModal();
+      document.body.style.overflow = "hidden";
+    }
+    viewer.addEventListener("close", () => {
+      if (viewer.open) return; // reopened before this event arrived
+      stage.innerHTML = ""; // also stops any playing video
+      document.body.style.overflow = "";
+    });
+    document.getElementById("v-close").addEventListener("click", () => viewer.close());
+    document.getElementById("v-prev").addEventListener("click", () => step(-1));
+    document.getElementById("v-next").addEventListener("click", () => step(1));
+    addEventListener("keydown", e => {
+      if (!viewer.open) return;
+      if (e.key === "ArrowLeft") step(-1);
+      if (e.key === "ArrowRight") step(1);
+    });
+    // Swipe left/right to browse, swipe down to close
+    let touchStart = null;
+    stage.addEventListener("pointerdown", e => { touchStart = [e.clientX, e.clientY]; });
+    stage.addEventListener("pointerup", e => {
+      if (!touchStart) return;
+      const dx = e.clientX - touchStart[0], dy = e.clientY - touchStart[1];
+      touchStart = null;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) step(dx < 0 ? 1 : -1);
+      else if (dy > 90 && Math.abs(dy) > Math.abs(dx)) viewer.close();
+    });
+    document.getElementById("trip-list").addEventListener("click", e => {
+      const btn = e.target.closest("[data-trip]");
+      if (btn) openGallery(trips[+btn.dataset.trip], +btn.dataset.i);
+    });
+
     // Phones can keep an old copy of this page. Check for a newer one and reload once if found.
     if (location.hostname.endsWith("github.io")) {
       const mine = document.querySelector('meta[name="site-version"]').content;
