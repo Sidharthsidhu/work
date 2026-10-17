@@ -139,6 +139,82 @@
     /* Footer */
     footer { border-top: 1px solid var(--border); padding: 32px 0; text-align: center; color: var(--muted); }
     footer .insta { font-weight: 600; }
+
+    /* ===== Animations ===== */
+    @keyframes rise { from { opacity: 0; transform: translateY(24px); } }
+    @keyframes pop { from { opacity: 0; transform: translateY(30px) scale(0.6); } }
+    @keyframes bob { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-10px) rotate(-6deg); } }
+    @keyframes wiggle { 25% { transform: rotate(-8deg) scale(1.08); } 75% { transform: rotate(8deg) scale(1.08); } }
+    @keyframes heroShift { from { background-position: 0% 50%; } to { background-position: 100% 50%; } }
+    @keyframes drift { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(12px, -18px); } }
+    @keyframes flyBy { 0% { transform: translate(0, 20px); } 50% { transform: translate(55vw, -10px); } 100% { transform: translate(calc(100vw + 120px), 20px); } }
+    @keyframes flip { from { transform: rotateX(90deg); opacity: 0.2; } }
+    @keyframes ping { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-2) 60%, transparent); } 100% { box-shadow: 0 0 0 9px transparent; } }
+    @keyframes burst { to { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(360deg); opacity: 0; } }
+
+    nav { transition: box-shadow 0.3s ease; }
+    nav.scrolled { box-shadow: var(--shadow); }
+    .progress { position: absolute; left: 0; bottom: -1px; height: 3px; width: 0; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+
+    .hero { position: relative; overflow: hidden; background-size: 200% 200%; animation: heroShift 14s ease-in-out infinite alternate; }
+    .hero .wrap { position: relative; z-index: 1; }
+    .hero .emoji span { display: inline-block; animation: bob 3s ease-in-out infinite; }
+    .hero .emoji span:nth-child(2) { animation-delay: 0.4s; }
+    .hero .emoji span:nth-child(3) { animation-delay: 0.8s; }
+    .hero h1 .ch { display: inline-block; animation: pop 0.6s cubic-bezier(0.3, 1.6, 0.5, 1) backwards; }
+    .hero p { animation: rise 0.7s ease 0.6s backwards; }
+    .hero .btn { animation: rise 0.7s ease 0.8s backwards; }
+    .float { position: absolute; font-size: 2rem; opacity: 0.35; pointer-events: none; animation: drift 9s ease-in-out infinite; }
+    .f1 { top: 18%; left: 8%; }
+    .f2 { top: 66%; left: 12%; font-size: 1.6rem; animation-delay: -3s; }
+    .f3 { top: 20%; right: 9%; animation-delay: -5s; }
+    .f4 { top: 70%; right: 12%; font-size: 1.6rem; animation-delay: -1.5s; }
+    .plane { position: absolute; top: 10%; left: -60px; font-size: 1.8rem; pointer-events: none; animation: flyBy 16s linear infinite; }
+
+    .btn { position: relative; overflow: hidden; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .btn:hover { transform: translateY(-3px); }
+    .btn::after {
+      content: ""; position: absolute; inset: 0; transform: translateX(-100%); transition: transform 0.6s ease;
+      background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.45) 50%, transparent 70%);
+    }
+    .btn:hover::after { transform: translateX(100%); }
+
+    .section-title h2::after {
+      content: ""; display: block; width: 0; height: 4px; margin: 10px auto 0; border-radius: 4px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width 0.8s ease 0.2s;
+    }
+    .section-title.drawn h2::after { width: 64px; }
+
+    .card { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+    .member:hover, .trip:hover, .rule:hover { transform: translateY(-6px); }
+    .avatar { transition: box-shadow 0.3s ease; }
+    .member:hover .avatar { animation: wiggle 0.5s ease; box-shadow: 0 0 0 3px var(--surface), 0 0 0 6px var(--accent); }
+    .rule .n { display: inline-block; }
+    .rule:hover .n { animation: wiggle 0.5s ease; }
+    .trip { animation: rise 0.5s ease backwards; }
+    .trip .banner img { transition: opacity 0.8s ease, transform 0.6s ease; }
+    .trip:hover .banner img { transform: scale(1.06); }
+    .trip .em { display: inline-block; }
+    .trip:hover .em { animation: bob 1s ease-in-out infinite; }
+
+    .next-trip { cursor: pointer; }
+    .next-trip .label::before {
+      content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 8px; border-radius: 50%;
+      vertical-align: 1px; background: var(--accent-2); animation: ping 1.6s ease-out infinite;
+    }
+    .next-trip .hint { color: var(--accent); font-weight: 500; }
+    .countdown { perspective: 300px; }
+    .countdown b.flip { animation: flip 0.45s ease; }
+    .confetti { position: fixed; z-index: 50; font-size: 1.3rem; pointer-events: none; transform: translate(-50%, -50%); animation: burst 1s ease-out forwards; }
+
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .reveal { opacity: 1; transform: none; }
+      .plane, .float { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -152,11 +228,17 @@
         <li class="hide-sm"><a href="#rules">Rules</a></li>
       </ul>
     </div>
+    <div class="progress" id="progress"></div>
   </nav>
 
   <header class="hero" id="top">
+    <span class="plane" aria-hidden="true">✈️</span>
+    <span class="float f1" aria-hidden="true">☁️</span>
+    <span class="float f2" aria-hidden="true">🌊</span>
+    <span class="float f3" aria-hidden="true">🌿</span>
+    <span class="float f4" aria-hidden="true">📸</span>
     <div class="wrap">
-      <div class="emoji">🎒🌴🏖️</div>
+      <div class="emoji"><span>🎒</span><span>🌴</span><span>🏖️</span></div>
       <h1>Dev_oopss</h1>
       <p>Six friends. Zero deployments on weekends. We swap office work for road trips, staycations and long talks over chai.</p>
       <a class="btn" href="#trips">See our trips</a>
@@ -265,12 +347,12 @@
     function renderTrips(filter) {
       const list = trips
         .filter(t => filter === "all" || (filter === "upcoming") === isUpcoming(t));
-      document.getElementById("trip-list").innerHTML = list.map(t => {
+      document.getElementById("trip-list").innerHTML = list.map((t, n) => {
         const up = isUpcoming(t);
         const pics = t.photos || (t.photo ? [t.photo] : []);
         return `
-        <article class="card trip">
-          <div class="banner" style="background:${t.color}">${pics.length ? pics.map((p, i) => `<img src="${p}" alt="${t.title}" class="${i ? "" : "on"}">`).join("") : t.emoji}</div>
+        <article class="card trip" style="animation-delay:${n * 90}ms">
+          <div class="banner" style="background:${t.color}">${pics.length ? pics.map((p, i) => `<img src="${p}" alt="${t.title}" class="${i ? "" : "on"}">`).join("") : `<span class="em">${t.emoji}</span>`}</div>
           <div class="body">
             <span class="tag ${up ? "upcoming" : ""}">${up ? "Upcoming" : "Done ✓"}</span>
             <h3>${t.title}</h3>
@@ -311,24 +393,101 @@
         <div>
           <div class="label">Next escape</div>
           <h3>${next.emoji} ${next.title}</h3>
-          <div class="meta">📍 ${next.place} · ${fmt(next.date)}</div>
+          <div class="meta">📍 ${next.place} · ${fmt(next.date)} · <span class="hint">tap for hype 🎉</span></div>
         </div>
         ${next.date ? `<div class="countdown">
           <div><b id="cd-d">0</b><small>days</small></div>
           <div><b id="cd-h">0</b><small>hours</small></div>
           <div><b id="cd-m">0</b><small>mins</small></div>
+          <div><b id="cd-s">0</b><small>secs</small></div>
         </div>` : ""}`;
+      const show = (id, v) => {
+        const el = document.getElementById(id);
+        if (el.textContent === String(v)) return;
+        el.textContent = v;
+        el.classList.remove("flip");
+        void el.offsetWidth;
+        el.classList.add("flip");
+      };
       const tick = () => {
         const diff = Math.max(0, parse(next.date) - new Date());
-        document.getElementById("cd-d").textContent = Math.floor(diff / 864e5);
-        document.getElementById("cd-h").textContent = Math.floor(diff / 36e5) % 24;
-        document.getElementById("cd-m").textContent = Math.floor(diff / 6e4) % 60;
+        show("cd-d", Math.floor(diff / 864e5));
+        show("cd-h", Math.floor(diff / 36e5) % 24);
+        show("cd-m", Math.floor(diff / 6e4) % 60);
+        show("cd-s", Math.floor(diff / 1e3) % 60);
       };
       if (next.date) {
         tick();
-        setInterval(tick, 30000);
+        setInterval(tick, 1000);
       }
     }
+
+    // ===== Animations =====
+    const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // Title letters pop in one by one
+    const h1 = document.querySelector(".hero h1");
+    h1.setAttribute("aria-label", h1.textContent);
+    h1.innerHTML = [...h1.textContent].map((c, i) =>
+      `<span class="ch" aria-hidden="true" style="animation-delay:${i * 60}ms">${c}</span>`).join("");
+
+    // Nav shadow and scroll progress bar
+    const nav = document.querySelector("nav");
+    const bar = document.getElementById("progress");
+    const onScroll = () => {
+      const max = document.documentElement.scrollHeight - innerHeight;
+      bar.style.width = (max > 0 ? scrollY / max * 100 : 0) + "%";
+      nav.classList.toggle("scrolled", scrollY > 10);
+    };
+    addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    // Cards slide up as they scroll into view; section titles draw their underline
+    const titles = document.querySelectorAll(".section-title");
+    const pieces = document.querySelectorAll(".next-trip, .member, .rule");
+    if (reduceMotion || !("IntersectionObserver" in window)) {
+      titles.forEach(t => t.classList.add("drawn"));
+    } else {
+      pieces.forEach(el => {
+        if (el.getBoundingClientRect().top < innerHeight) return;
+        el.classList.add("reveal");
+        el.style.transitionDelay = [...el.parentNode.children].indexOf(el) * 80 + "ms";
+        el.addEventListener("transitionend", () => {
+          el.classList.remove("reveal", "in");
+          el.style.transitionDelay = "";
+        }, { once: true });
+      });
+      const io = new IntersectionObserver(entries => entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        e.target.classList.add(e.target.classList.contains("section-title") ? "drawn" : "in");
+        io.unobserve(e.target);
+      }), { threshold: 0.15 });
+      titles.forEach(t => io.observe(t));
+      document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+      // Never leave anything hidden for long
+      setTimeout(() => {
+        titles.forEach(t => t.classList.add("drawn"));
+        document.querySelectorAll(".reveal").forEach(el => el.classList.add("in"));
+      }, 4000);
+    }
+
+    // Tap the next-trip box for a confetti burst
+    box.addEventListener("click", e => {
+      if (reduceMotion) return;
+      const icons = ["🎉", "✨", "🌿", "🎒", "📸", "🥳"];
+      for (let i = 0; i < 24; i++) {
+        const s = document.createElement("span");
+        s.className = "confetti";
+        s.textContent = icons[i % icons.length];
+        const a = Math.random() * Math.PI * 2, d = 80 + Math.random() * 140;
+        s.style.left = e.clientX + "px";
+        s.style.top = e.clientY + "px";
+        s.style.setProperty("--dx", Math.cos(a) * d + "px");
+        s.style.setProperty("--dy", Math.sin(a) * d - 60 + "px");
+        s.addEventListener("animationend", () => s.remove());
+        document.body.appendChild(s);
+      }
+    });
   </script>
 </body>
 </html>
