@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sidharth K</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Sidharth K, Application Developer (.NET, C#, SQL Server) and IT support technician based in Kerala, India.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: single column, left-aligned editorial flow; hero pairs intro with a "system info" spec readout; experience as a dated timeline. */
+:root {
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --fg: #141a26;
+  --muted: #586174;
+  --line: #dde1e8;
+  --accent: #1f4fd8;
+  --accent-soft: #e6ecfd;
+  --ok: #17845a;
+  --amber: #b86a00;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e121a; --surface: #161c27; --fg: #e8ebf2; --muted: #9aa3b5; --line: #273041;
+    --accent: #7c9cff; --accent-soft: #1c2645; --ok: #4cc58f; --amber: #f0a948;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e121a; --surface: #161c27; --fg: #e8ebf2; --muted: #9aa3b5; --line: #273041;
+  --accent: #7c9cff; --accent-soft: #1c2645; --ok: #4cc58f; --amber: #f0a948;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { animation: none !important; transition: none !important; } }
+body {
+  background: var(--bg); color: var(--fg);
+  font: 400 1rem/1.65 var(--body);
+  -webkit-font-smoothing: antialiased;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+a { color: var(--accent); text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.1; }
+p { margin: 0; }
+
+.wrap {
+  max-width: 1080px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* Header */
+.top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 12px; }
+.brand { font: 700 1.05rem var(--display); color: var(--fg); text-decoration: none; letter-spacing: -0.01em; }
+.brand span { color: var(--accent); }
+.nav { display: flex; align-items: center; gap: 4px; }
+.nav a { color: var(--muted); text-decoration: none; font-size: 0.9rem; padding: 6px 10px; border-radius: 6px; }
+.nav a:hover { color: var(--fg); background: var(--accent-soft); }
+.theme-btn {
+  border: 1px solid var(--line); background: var(--surface); color: var(--fg);
+  width: 36px; height: 36px; border-radius: 8px; cursor: pointer; display: grid; place-items: center;
+}
+.theme-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+@media (max-width: 720px) { .nav a { display: none; } }
+
+/* Hero */
+.hero { padding-block: clamp(48px, 9vw, 104px) clamp(40px, 7vw, 80px); }
+.hero .wrap { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 64px); align-items: center; }
+@media (max-width: 860px) { .hero .wrap { grid-template-columns: minmax(0, 1fr); } }
+.eyebrow { font: 500 0.78rem var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+.hero h1 { font-size: clamp(2.6rem, 7vw, 4.6rem); font-weight: 800; letter-spacing: -0.035em; margin-top: 14px; }
+.hero .role { font: 500 clamp(1.15rem, 2.4vw, 1.45rem)/1.35 var(--display); color: var(--muted); margin-top: 14px; }
+.hero .role b { color: var(--fg); font-weight: 700; }
+.hero .lede { margin-top: 22px; max-width: 58ch; color: var(--muted); font-size: 1.05rem; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; border-radius: 8px;
+  font: 600 0.95rem var(--body); text-decoration: none; border: 1px solid var(--line); color: var(--fg); background: var(--surface);
+  transition: transform .15s ease, border-color .15s ease;
+}
+.btn:hover { transform: translateY(-1px); border-color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+
+/* Spec readout */
+.spec { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; font-family: var(--mono); font-size: 0.85rem; }
+.spec-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--line); color: var(--muted); }
+.status { display: inline-flex; align-items: center; gap: 8px; color: var(--ok); }
+.status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 4px color-mix(in srgb, var(--ok) 20%, transparent); animation: pulse 2.4s ease-in-out infinite; }
+@keyframes pulse { 50% { box-shadow: 0 0 0 7px color-mix(in srgb, var(--ok) 0%, transparent); } }
+.spec dl { margin: 0; padding: 8px 0; }
+.spec .row { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px; padding: 7px 16px; }
+.spec dt { color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.74rem; padding-top: 2px; }
+.spec dd { margin: 0; color: var(--fg); overflow-wrap: anywhere; }
+.spec dd .hl { color: var(--accent); }
+.spec dd .warn { color: var(--amber); }
+
+/* Sections */
+section.block { padding-block: clamp(56px, 8vw, 96px); border-top: 1px solid var(--line); }
+.sec-head { display: grid; gap: 10px; margin-bottom: clamp(28px, 4vw, 44px); }
+.sec-head h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 700; letter-spacing: -0.025em; }
+.sec-head p { color: var(--muted); max-width: 60ch; }
+
+/* About */
+.tracks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+@media (max-width: 720px) { .tracks { grid-template-columns: minmax(0, 1fr); } }
+.track { padding: 26px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); display: grid; gap: 12px; align-content: start; }
+.track h3 { font-size: 1.3rem; font-weight: 700; }
+.track .tag { font: 500 0.75rem var(--mono); color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+.track p { color: var(--muted); }
+
+/* Work */
+.work { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+@media (max-width: 720px) { .work { grid-template-columns: minmax(0, 1fr); } }
+.project { padding: 26px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); display: grid; gap: 12px; align-content: start; transition: border-color .2s ease, transform .2s ease; }
+.project:hover { border-color: var(--accent); transform: translateY(-2px); }
+.project .kind { font: 500 0.75rem var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+.project h3 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.015em; }
+.project p { color: var(--muted); }
+.flow { font: 400 0.82rem var(--mono); color: var(--fg); background: var(--accent-soft); border-radius: 6px; padding: 8px 12px; overflow-x: auto; white-space: nowrap; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.chips li { font: 500 0.78rem var(--mono); padding: 4px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+
+/* Experience timeline */
+.timeline { display: grid; gap: 0; }
+.job { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 32px; padding-block: 28px; border-top: 1px solid var(--line); }
+.job:first-child { border-top: 0; padding-top: 0; }
+@media (max-width: 720px) { .job { grid-template-columns: minmax(0, 1fr); gap: 10px; } }
+.when { font: 500 0.85rem var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.when .now { display: inline-block; margin-top: 6px; color: var(--ok); }
+.job h3 { font-size: 1.35rem; font-weight: 700; }
+.job .org { color: var(--accent); font-weight: 600; margin-top: 4px; }
+.job ul { margin: 14px 0 0; padding-left: 1.1em; display: grid; gap: 8px; color: var(--muted); max-width: 70ch; }
+.job li::marker { color: var(--accent); }
+
+/* Skills */
+.skills { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px 32px; }
+@media (max-width: 900px) { .skills { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .skills { grid-template-columns: minmax(0, 1fr); } }
+.skill h3 { font: 500 0.78rem var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+.skill .chips li { color: var(--fg); background: var(--surface); }
+
+/* Education */
+.edu { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+@media (max-width: 860px) { .edu { grid-template-columns: minmax(0, 1fr); } }
+.cred { padding: 22px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); display: grid; gap: 6px; align-content: start; }
+.cred .kind { font: 500 0.75rem var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.cred h3 { font-size: 1.15rem; font-weight: 700; }
+.cred p { color: var(--muted); font-size: 0.95rem; }
+.cred .pending { color: var(--amber); font: 500 0.8rem var(--mono); }
+
+/* Contact */
+.contact h2 { font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 800; letter-spacing: -0.03em; max-width: 18ch; }
+.contact .lede { color: var(--muted); margin-top: 16px; max-width: 56ch; }
+.lines { display: grid; gap: 12px; margin-top: 32px; max-width: 640px; }
+.line { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 14px 16px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+.line .k { font: 500 0.75rem var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); width: 72px; }
+.line .v { flex: 1; min-width: 0; font: 500 1rem var(--mono); overflow-wrap: anywhere; user-select: all; }
+.copy { border: 1px solid var(--line); background: transparent; color: var(--fg); font: 500 0.8rem var(--body); padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+.copy:hover { border-color: var(--accent); color: var(--accent); }
+
+footer { border-top: 1px solid var(--line); }
+footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; padding-block: 24px; color: var(--muted); font: 400 0.82rem var(--mono); }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top">sidharth<span>.k</span></a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#about">About</a>
+      <a href="#work">Work</a>
+      <a href="#experience">Experience</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+      <button class="theme-btn" id="theme-btn" type="button" aria-label="Switch colour theme">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow">Application Developer · Kerala, India</p>
+        <h1>Sidharth K</h1>
+        <p class="role"><b>.NET developer</b> who also knows the hardware it runs on.</p>
+        <p class="lede">I build and maintain business web applications with ASP.NET MVC, C#, VB.NET and SQL Server. Before writing software full time, I spent two years fixing, building and networking the machines people work on. I take real business requirements and turn them into software that is reliable and easy to support.</p>
+        <div class="actions">
+          <a class="btn primary" href="#work">See my work</a>
+          <a class="btn" href="#contact">Get in touch</a>
+        </div>
+      </div>
+
+      <aside class="spec" aria-label="Quick profile">
+        <div class="spec-head"><span>system_info</span><span class="status">online</span></div>
+        <dl>
+          <div class="row"><dt>Role</dt><dd>Application Developer</dd></div>
+          <div class="row"><dt>Company</dt><dd>Amplitude Software System</dd></div>
+          <div class="row"><dt>Stack</dt><dd><span class="hl">.NET</span> · C# · VB.NET · SQL Server</dd></div>
+          <div class="row"><dt>In IT</dt><dd>since Mar 2021 <span class="hl">(5+ yrs)</span></dd></div>
+          <div class="row"><dt>Location</dt><dd>Nilambur, Malappuram, Kerala</dd></div>
+          <div class="row"><dt>Speaks</dt><dd>English · Malayalam · Hindi</dd></div>
+          <div class="row"><dt>Learning</dt><dd>Microsoft Azure <span class="warn">[in progress]</span></dd></div>
+        </dl>
+      </aside>
+    </div>
+  </section>
+
+  <section class="block" id="about">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">About</p>
+        <h2>Two sides of IT, one person</h2>
+        <p>Most developers never open a computer case. Most technicians never ship a web app. I have done both, so I understand the whole system, from server rack to browser.</p>
+      </div>
+      <div class="tracks">
+        <article class="track">
+          <span class="tag">Software · 3+ years</span>
+          <h3>Application development</h3>
+          <p>Full-stack web applications in ASP.NET MVC, VB.NET and C#, with RESTful APIs, SQL Server and MySQL behind them. I have built service workflows, a logistics platform, AI document extraction and Crystal Reports dashboards that teams use to make decisions.</p>
+        </article>
+        <article class="track">
+          <span class="tag">Hardware &amp; support · 2+ years</span>
+          <h3>IT support and infrastructure</h3>
+          <p>Installing operating systems, diagnosing hardware faults, setting up LAN/WAN networks and maintaining desktops, laptops, servers and peripherals. I also advised businesses on which hardware to buy and handled support for international clients under pressure.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="work">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Selected work</p>
+        <h2>Things I have built</h2>
+        <p>Production work at Amplitude Software System. These are client systems, so the descriptions cover what I built rather than linking to the code.</p>
+      </div>
+      <div class="work">
+        <article class="project">
+          <span class="kind">AI · Document intelligence</span>
+          <h3>PDF &amp; image data extraction</h3>
+          <p>A feature that reads uploaded PDF files and images, pulls out the data that matters, and converts it into structured JSON that other parts of the system can use directly. It replaces manual data entry.</p>
+          <div class="flow">upload (PDF / image) → extract → structure → JSON → downstream modules</div>
+          <ul class="chips"><li>AI extraction</li><li>JSON</li><li>ASP.NET MVC</li></ul>
+        </article>
+        <article class="project">
+          <span class="kind">Logistics platform</span>
+          <h3>Net4log</h3>
+          <p>An upcoming logistics platform. I played a key role in building it: implementing core features and making the system more reliable through clean code and thorough testing.</p>
+          <ul class="chips"><li>VB.NET</li><li>REST APIs</li><li>MySQL</li><li>Testing</li></ul>
+        </article>
+        <article class="project">
+          <span class="kind">Workflow modules</span>
+          <h3>Service provider management</h3>
+          <p>End-to-end service workflows for clients, covering service registration, assignment, tracking and delivery. I developed and maintain these modules.</p>
+          <div class="flow">register → assign → track → deliver</div>
+          <ul class="chips"><li>ASP.NET MVC</li><li>JavaScript</li><li>SQL</li></ul>
+        </article>
+        <article class="project">
+          <span class="kind">Reporting</span>
+          <h3>Business reports</h3>
+          <p>Crystal Reports built on top of the application data, giving teams across departments the figures they need for data-driven decisions.</p>
+          <ul class="chips"><li>Crystal Reports</li><li>T-SQL</li><li>Stored procedures</li></ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="experience">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Experience</p>
+        <h2>Where I have worked</h2>
+      </div>
+      <div class="timeline">
+        <article class="job">
+          <div class="when">Mar 2023 – Present<br><span class="now">● current role</span></div>
+          <div>
+            <h3>Application Developer</h3>
+            <p class="org">Amplitude Software System</p>
+            <ul>
+              <li>Design, develop and maintain scalable full-stack web applications using ASP.NET MVC, VB.NET, RESTful APIs, MySQL, HTML, CSS and JavaScript.</li>
+              <li>Built service provider modules covering service registration, assignment, tracking and delivery.</li>
+              <li>Implemented AI-powered document intelligence that turns uploaded PDFs and images into structured JSON.</li>
+              <li>Played a key role in building Net4log, an upcoming logistics platform.</li>
+              <li>Created Crystal Reports for decision-making across departments.</li>
+              <li>Gathered requirements with clients and stakeholders and turned them into working solutions.</li>
+              <li>Provided IT support to international clients for 3+ months under high-pressure conditions.</li>
+              <li>Use AI coding assistants to speed up development and troubleshooting.</li>
+            </ul>
+          </div>
+        </article>
+        <article class="job">
+          <div class="when">Mar 2021 – Feb 2023</div>
+          <div>
+            <h3>Hardware &amp; Software Technician</h3>
+            <p class="org">Access Computers</p>
+            <ul>
+              <li>Installed and configured operating systems, hardware and software for small businesses and individual clients.</li>
+              <li>Recommended, sold and deployed hardware and software matched to each client's needs and budget.</li>
+              <li>Diagnosed and fixed hardware, network and software issues, reducing downtime.</li>
+              <li>Handled preventive maintenance and performance tuning for desktops, laptops, servers and network peripherals.</li>
+              <li>Advised clients on IT upgrades, software rollouts and infrastructure improvements.</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="skills">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Skills</p>
+        <h2>Tools I work with</h2>
+      </div>
+      <div class="skills">
+        <div class="skill"><h3>Backend</h3><ul class="chips"><li>C#</li><li>VB.NET</li><li>ASP.NET MVC</li><li>.NET Framework</li><li>RESTful APIs</li></ul></div>
+        <div class="skill"><h3>Frontend</h3><ul class="chips"><li>HTML5</li><li>CSS3</li><li>JavaScript</li><li>Angular</li></ul></div>
+        <div class="skill"><h3>Database</h3><ul class="chips"><li>SQL Server</li><li>MySQL</li><li>T-SQL</li><li>Stored procedures</li></ul></div>
+        <div class="skill"><h3>AI &amp; reporting</h3><ul class="chips"><li>PDF/image extraction</li><li>JSON pipelines</li><li>AI-assisted coding</li><li>Crystal Reports</li></ul></div>
+        <div class="skill"><h3>Tools &amp; DevOps</h3><ul class="chips"><li>Visual Studio</li><li>VS Code</li><li>Git</li><li>GitHub</li><li>Azure DevOps</li><li>CI/CD</li><li>Postman</li></ul></div>
+        <div class="skill"><h3>Hardware &amp; IT support</h3><ul class="chips"><li>OS installation</li><li>LAN/WAN setup</li><li>Hardware diagnostics</li><li>Servers &amp; workstations</li><li>Printers &amp; peripherals</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="education">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Education &amp; certifications</p>
+        <h2>Learning</h2>
+      </div>
+      <div class="edu">
+        <article class="cred">
+          <span class="kind">Degree · 2020 – 2022</span>
+          <h3>Master of Computer Applications (MCA)</h3>
+          <p>MES College of Engineering, Kuttipuram</p>
+        </article>
+        <article class="cred">
+          <span class="kind">Certification</span>
+          <h3>ASP.NET MVC with Angular, Full Stack</h3>
+          <p>Luminar Technolab, Cochin</p>
+        </article>
+        <article class="cred">
+          <span class="kind">Certification</span>
+          <h3>Microsoft Azure</h3>
+          <p>Cloud fundamentals and services</p>
+          <span class="pending">● in progress</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="block contact" id="contact">
+    <div class="wrap">
+      <p class="eyebrow">Contact</p>
+      <h2>Let's build something that works.</h2>
+      <p class="lede">I am open to developer roles and freelance .NET work. Email is the quickest way to reach me.</p>
+      <div class="lines">
+        <div class="line"><span class="k">Email</span><a class="v" href="mailto:sidharth796@gmail.com">sidharth796@gmail.com</a><button class="copy" type="button" data-copy="sidharth796@gmail.com">Copy</button></div>
+        <div class="line"><span class="k">Phone</span><span class="v">+91 80751 12469</span><button class="copy" type="button" data-copy="+918075112469">Copy</button></div>
+        <div class="line"><span class="k">Based in</span><span class="v">Nilambur, Malappuram, Kerala</span></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap"><span>© 2026 Sidharth K</span><span>Built with HTML &amp; CSS</span></div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  try { var saved = localStorage.getItem("theme"); if (saved) root.setAttribute("data-theme", saved); } catch (e) {}
+  document.getElementById("theme-btn").addEventListener("click", function () {
+    var current = root.getAttribute("data-theme") ||
+      (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    var next = current === "dark" ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem("theme", next); } catch (e) {}
+  });
+  document.querySelectorAll(".copy").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var done = function () { btn.textContent = "Copied"; setTimeout(function () { btn.textContent = "Copy"; }, 1600); };
+      var fallback = function () {
+        var r = document.createRange(); r.selectNodeContents(btn.previousElementSibling);
+        var s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = "Selected";
+      };
+      if (navigator.clipboard) navigator.clipboard.writeText(btn.dataset.copy).then(done, fallback); else fallback();
+    });
+  });
+})();
+</script>
+</body>
+</html>
