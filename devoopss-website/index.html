@@ -210,6 +210,40 @@
     .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.6s ease, transform 0.6s ease; }
     .reveal.in { opacity: 1; transform: none; }
 
+    /* ===== Layout per screen size ===== */
+    .countdown { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+    .countdown div { min-width: 64px; }
+    .crew { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+    .trips { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .rules { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    @media (max-width: 900px) {
+      .crew { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .rules { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 680px) {
+      .trips { grid-template-columns: minmax(0, 1fr); }
+      .trip .banner { height: auto; aspect-ratio: 16 / 9; }
+    }
+    @media (max-width: 560px) {
+      section { padding: 48px 0; }
+      .hero { padding: 56px 0 48px; }
+      .crew { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+      .member { padding: 18px 10px; }
+      .rules { grid-template-columns: minmax(0, 1fr); }
+      .next-trip { padding: 22px 18px; }
+      .countdown div { min-width: 0; padding: 10px 4px; }
+      .countdown b { font-size: 1.45rem; }
+      .float { display: none; }
+    }
+    @media (max-width: 380px) {
+      .hero .btn { display: block; width: fit-content; margin: 0 auto 10px; }
+      .btn.ghost { margin-left: auto; }
+    }
+    /* Touch screens: no stuck hover lifts after a tap */
+    @media (hover: none) {
+      .member:hover, .trip:hover, .rule:hover, .btn:hover, .trip:hover .banner img { transform: none; }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition: none !important; }
       .reveal { opacity: 1; transform: none; }
