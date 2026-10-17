@@ -146,7 +146,6 @@
     @keyframes wiggle { 25% { transform: rotate(-8deg) scale(1.08); } 75% { transform: rotate(8deg) scale(1.08); } }
     @keyframes heroShift { from { background-position: 0% 50%; } to { background-position: 100% 50%; } }
     @keyframes drift { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(12px, -18px); } }
-    @keyframes flyBy { 0% { transform: translate(0, 20px); } 50% { transform: translate(55vw, -10px); } 100% { transform: translate(calc(100vw + 120px), 20px); } }
     @keyframes flip { from { transform: rotateX(90deg); opacity: 0.2; } }
     @keyframes ping { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-2) 60%, transparent); } 100% { box-shadow: 0 0 0 9px transparent; } }
     @keyframes burst { to { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(360deg); opacity: 0; } }
@@ -168,7 +167,7 @@
     .f2 { top: 66%; left: 12%; font-size: 1.6rem; animation-delay: -3s; }
     .f3 { top: 20%; right: 9%; animation-delay: -5s; }
     .f4 { top: 70%; right: 12%; font-size: 1.6rem; animation-delay: -1.5s; }
-    .plane { position: absolute; top: 10%; left: -60px; font-size: 1.8rem; pointer-events: none; animation: flyBy 16s linear infinite; }
+    .sky { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 
     .btn { position: relative; overflow: hidden; transition: transform 0.2s ease, box-shadow 0.2s ease; }
     .btn:hover { transform: translateY(-3px); }
@@ -260,7 +259,7 @@
   </nav>
 
   <header class="hero" id="top">
-    <span class="plane" aria-hidden="true">✈️</span>
+    <canvas class="sky" aria-hidden="true"></canvas>
     <span class="float f1" aria-hidden="true">☁️</span>
     <span class="float f2" aria-hidden="true">🌊</span>
     <span class="float f3" aria-hidden="true">🌿</span>
@@ -513,6 +512,120 @@
         document.body.appendChild(s);
       }
     });
+    // A little plane flies across the hero on a wavy path, banking into its turns and leaving twin contrails
+    const sky = document.querySelector(".sky");
+    const ctx = sky.getContext("2d");
+    const hero = document.querySelector(".hero");
+    let W = 0, H = 0, flight = null, wait = 0, trail = [];
+    const fitSky = () => {
+      const dpr = devicePixelRatio || 1;
+      W = hero.clientWidth;
+      H = hero.clientHeight;
+      sky.width = W * dpr;
+      sky.height = H * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    new ResizeObserver(fitSky).observe(hero);
+    fitSky();
+
+    const token = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    const newFlight = t => ({
+      start: t,
+      dur: 7000 + Math.random() * 2500,
+      dir: Math.random() < 0.5 ? 1 : -1,
+      y: H * (0.14 + Math.random() * 0.22),
+      amp: H * (0.04 + Math.random() * 0.06),
+      waves: 0.8 + Math.random() * 0.9,
+      phase: Math.random() * Math.PI * 2,
+      size: W < 560 ? 0.75 : 1,
+      body: token("--text"),
+      wing: token("--accent"),
+    });
+    const at = (f, p) => {
+      const x = f.dir > 0 ? -90 + (W + 180) * p : W + 90 - (W + 180) * p;
+      return [x, f.y + f.amp * Math.sin(p * Math.PI * 2 * f.waves + f.phase)];
+    };
+    const heading = (f, p) => {
+      const [x1, y1] = at(f, p), [x2, y2] = at(f, p + 0.002);
+      return Math.atan2(y2 - y1, x2 - x1);
+    };
+
+    // Top-down plane pointing along +x, about 46px long
+    function drawPlane(f, x, y, angle, bank) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+      ctx.scale(f.size, f.size * (1 - 0.35 * Math.abs(bank)));
+      const shape = color => {
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(6, -2); ctx.lineTo(-7, -21); ctx.lineTo(-12, -21); ctx.lineTo(-6, -2);
+        ctx.moveTo(6, 2); ctx.lineTo(-7, 21); ctx.lineTo(-12, 21); ctx.lineTo(-6, 2);
+        ctx.moveTo(-15, -1.5); ctx.lineTo(-21, -9); ctx.lineTo(-24, -9); ctx.lineTo(-21, -1.5);
+        ctx.moveTo(-15, 1.5); ctx.lineTo(-21, 9); ctx.lineTo(-24, 9); ctx.lineTo(-21, 1.5);
+        ctx.fill();
+      };
+      // soft shadow on the "ground" below
+      ctx.save();
+      ctx.translate(8, 16);
+      shape("rgba(0, 0, 0, 0.10)");
+      ctx.beginPath(); ctx.ellipse(-2, 0, 22, 4, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+      shape(f.wing);
+      ctx.fillStyle = f.body;
+      ctx.beginPath(); ctx.ellipse(-2, 0, 22, 4, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
+      ctx.beginPath(); ctx.ellipse(13, 0, 3.5, 2, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    }
+
+    function drawTrail(now) {
+      trail = trail.filter(pt => now - pt.t < 1800);
+      ctx.lineCap = "round";
+      ctx.lineWidth = 2.5;
+      for (const side of ["a", "b"]) {
+        for (let i = 1; i < trail.length; i++) {
+          const p0 = trail[i - 1], p1 = trail[i];
+          ctx.strokeStyle = `rgba(255, 255, 255, ${0.9 * (1 - (now - p1.t) / 1800)})`;
+          ctx.beginPath();
+          ctx.moveTo(p0[side][0], p0[side][1]);
+          ctx.lineTo(p1[side][0], p1[side][1]);
+          ctx.stroke();
+        }
+      }
+    }
+
+    function frame(now) {
+      ctx.clearRect(0, 0, W, H);
+      if (!flight && now > wait) flight = newFlight(now);
+      if (flight) {
+        const p = (now - flight.start) / flight.dur;
+        if (p >= 1) {
+          flight = null;
+          wait = now + 2500 + Math.random() * 2500;
+        } else {
+          const [x, y] = at(flight, p);
+          const angle = heading(flight, p);
+          let turn = heading(flight, Math.min(1, p + 0.01)) - angle;
+          turn = Math.atan2(Math.sin(turn), Math.cos(turn));
+          const bank = Math.max(-1, Math.min(1, turn * 12));
+          // contrails start from the wing engines
+          const s = flight.size, back = -10 * s, side = 9 * s;
+          const cos = Math.cos(angle), sin = Math.sin(angle);
+          trail.push({
+            t: now,
+            a: [x + back * cos - side * sin, y + back * sin + side * cos],
+            b: [x + back * cos + side * sin, y + back * sin - side * cos],
+          });
+          drawTrail(now);
+          drawPlane(flight, x, y, angle, bank);
+        }
+      }
+      if (!flight && trail.length) drawTrail(now);
+      requestAnimationFrame(frame);
+    }
+    wait = performance.now() + 1200;
+    requestAnimationFrame(frame);
   </script>
 </body>
 </html>
