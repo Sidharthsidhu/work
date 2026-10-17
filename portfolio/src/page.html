@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: single left-aligned column; hero pairs a typed intro with a "system info" spec readout over a drifting circuit grid; stats strip, skills ticker, then sections; experience on a rail timeline. */
+/* Layout: single left-aligned column; hero pairs a typed intro with a "system info" spec readout over an animated node network; stats strip, skills ticker, then sections; experience on a rail timeline. */
 :root {
   --bg: #f5f6f8;
   --surface: #ffffff;
@@ -26,6 +26,7 @@
   --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, "Roboto Mono", monospace;
   --ease: cubic-bezier(.2, .7, .2, 1);
   --head-h: 61px;
+  --intro: .9s;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -115,14 +116,9 @@ section[id] { scroll-margin-top: calc(var(--head-h) + env(safe-area-inset-top, 0
 
 /* ---------- Hero ---------- */
 .hero { position: relative; overflow: hidden; isolation: isolate; padding-block: clamp(40px, 8vw, 96px) clamp(36px, 6vw, 72px); }
-.hero::before {
-  content: ""; position: absolute; inset: -40px; z-index: -1; pointer-events: none;
-  background-image: radial-gradient(var(--line) 1.3px, transparent 1.5px);
-  background-size: 28px 28px;
-  -webkit-mask-image: radial-gradient(ellipse 75% 65% at 70% 40%, #000 25%, transparent 78%);
-          mask-image: radial-gradient(ellipse 75% 65% at 70% 40%, #000 25%, transparent 78%);
-  animation: drift 26s linear infinite;
-}
+.net { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; pointer-events: none;
+  -webkit-mask-image: radial-gradient(ellipse 80% 75% at 70% 45%, #000 30%, transparent 85%);
+          mask-image: radial-gradient(ellipse 80% 75% at 70% 45%, #000 30%, transparent 85%); }
 .aurora { position: absolute; z-index: -2; border-radius: 50%; pointer-events: none; will-change: transform; }
 .aurora.a { width: 620px; height: 620px; top: -220px; right: -160px; background: radial-gradient(circle, var(--glow), transparent 65%); animation: float-a 18s ease-in-out infinite alternate; }
 .aurora.b { width: 520px; height: 520px; bottom: -260px; left: -180px; background: radial-gradient(circle, var(--glow-2), transparent 65%); animation: float-b 22s ease-in-out infinite alternate; }
@@ -136,7 +132,7 @@ section[id] { scroll-margin-top: calc(var(--head-h) + env(safe-area-inset-top, 0
 .hero .eyebrow { display: inline-block; line-height: 1.5; padding: 6px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); }
 .hero .eyebrow i { display: inline-block; vertical-align: 1px; margin-right: 8px; width: 7px; height: 7px; border-radius: 50%; background: var(--ok); animation: pulse 2.4s ease-in-out infinite; }
 .hero h1 { font-size: clamp(2.7rem, 11vw, 5rem); font-weight: 800; letter-spacing: -0.04em; margin-top: 18px; }
-.hero h1 .dot { color: var(--accent); display: inline-block; animation: bounce-in .6s var(--ease) 1s both; }
+.hero h1 .dot { color: var(--accent); display: inline-block; animation: bounce-in .6s var(--ease) calc(var(--intro) + 1s) both; }
 .role { font: 500 clamp(1.15rem, 3.6vw, 1.5rem)/1.35 var(--display); color: var(--muted); margin-top: 14px; min-height: 2.7em; }
 @media (min-width: 600px) { .role { min-height: 1.35em; } }
 .role b { color: var(--fg); font-weight: 700; }
@@ -179,11 +175,11 @@ section[id] { scroll-margin-top: calc(var(--head-h) + env(safe-area-inset-top, 0
 .meter span:last-child { color: var(--fg); font-variant-numeric: tabular-nums; }
 
 /* Hero load sequence */
-.hero .eyebrow { animation: rise .6s var(--ease) both; }
-.hero h1 .name { display: inline-block; animation: wipe 1s cubic-bezier(.7,0,.2,1) .15s both; }
-.hero .role { animation: rise .6s var(--ease) .55s both; }
-.hero .lede { animation: rise .6s var(--ease) .7s both; }
-.hero .actions { animation: rise .6s var(--ease) .85s both; }
+.hero .eyebrow { animation: rise .6s var(--ease) var(--intro) both; }
+.hero h1 .name { display: inline-block; animation: wipe 1s cubic-bezier(.7,0,.2,1) calc(var(--intro) + .15s) both; }
+.hero .role { animation: rise .6s var(--ease) calc(var(--intro) + .55s) both; }
+.hero .lede { animation: rise .6s var(--ease) calc(var(--intro) + .7s) both; }
+.hero .actions { animation: rise .6s var(--ease) calc(var(--intro) + .85s) both; }
 .spec.on .row { animation: boot .35s ease-out both; }
 .spec.on .row:nth-child(1) { animation-delay: .1s; } .spec.on .row:nth-child(2) { animation-delay: .22s; }
 .spec.on .row:nth-child(3) { animation-delay: .34s; } .spec.on .row:nth-child(4) { animation-delay: .46s; }
@@ -194,14 +190,14 @@ section[id] { scroll-margin-top: calc(var(--head-h) + env(safe-area-inset-top, 0
 
 /* Photo */
 @property --ang { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
-.photo-wrap { position: relative; justify-self: end; width: min(100%, 420px); animation: slide-in .9s var(--ease) .3s both; }
+.photo-wrap { position: relative; justify-self: end; width: min(100%, 420px); animation: slide-in .9s var(--ease) calc(var(--intro) + .3s) both; }
 .photo { margin: 0; position: relative; border-radius: 28px; padding: 3px; background: conic-gradient(from var(--ang), var(--accent), var(--amber), var(--accent-soft), var(--accent)); animation: spin 6s linear infinite; box-shadow: 0 30px 70px -34px rgba(20, 30, 60, .55); }
-.photo img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 30%; border-radius: 25px; background: var(--surface); animation: photo-in 1.2s cubic-bezier(.7,0,.2,1) .45s both; }
+.photo img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 30%; border-radius: 25px; background: var(--surface); animation: photo-in 1.2s cubic-bezier(.7,0,.2,1) calc(var(--intro) + .45s) both; }
 .float-chip { position: absolute; z-index: 2; display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--fg); font: 500 0.8rem var(--mono); white-space: nowrap; box-shadow: 0 14px 30px -16px rgba(20, 30, 60, .45); }
 .float-chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); animation: pulse 2.4s infinite; }
 .float-chip b { font: 800 1.05rem var(--display); color: var(--accent); }
-.float-chip.c1 { top: 9%; left: -34px; animation: pop .5s var(--ease) 1.4s both, bob 5s ease-in-out 2s infinite alternate; }
-.float-chip.c2 { bottom: 11%; right: -26px; animation: pop .5s var(--ease) 1.6s both, bob 6s ease-in-out 2.2s infinite alternate-reverse; }
+.float-chip.c1 { top: 9%; left: -34px; animation: pop .5s var(--ease) calc(var(--intro) + 1.4s) both, bob 5s ease-in-out calc(var(--intro) + 2s) infinite alternate; }
+.float-chip.c2 { bottom: 11%; right: -26px; animation: pop .5s var(--ease) calc(var(--intro) + 1.6s) both, bob 6s ease-in-out calc(var(--intro) + 2.2s) infinite alternate-reverse; }
 @media (max-width: 1100px) { .float-chip.c1 { left: -12px; } .float-chip.c2 { right: -10px; } }
 @media (max-width: 880px) {
   .photo-wrap { order: -1; justify-self: start; width: min(72%, 300px); }
@@ -352,8 +348,46 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
 
 /* ---------- Scroll reveal (JS adds .wait only to off-screen items, so the page is complete without it) ---------- */
 .reveal.wait { opacity: 0; transform: translateY(34px) scale(.98); }
-.reveal.wait.from-left { transform: translateX(-34px); }
+.reveal.wait:not(.in).from-left { transform: translateX(-34px); }
 .reveal.in { opacity: 1; transform: none; transition: opacity .8s var(--ease), transform .8s var(--ease); transition-delay: var(--d, 0s); }
+
+/* ---------- Extra motion ---------- */
+/* Startup splash */
+.splash { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; background: var(--bg); pointer-events: none;
+  animation: splash-out .6s cubic-bezier(.7,0,.2,1) var(--intro) forwards; }
+.splash-box { font: 500 1rem var(--mono); color: var(--fg); display: grid; gap: 14px; width: min(280px, 80vw); }
+.splash-box .p { color: var(--accent); }
+.splash-box .t { display: inline-block; overflow: hidden; white-space: nowrap; vertical-align: bottom; width: 0; animation: type .55s steps(18) .05s forwards; }
+.splash-bar { height: 3px; border-radius: 3px; background: var(--accent-soft); overflow: hidden; }
+.splash-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--amber)); transform-origin: 0 50%; animation: fill .75s var(--ease) .1s both; }
+@keyframes splash-out { to { transform: translateY(-100%); visibility: hidden; } }
+@keyframes type { to { width: 18ch; } }
+
+/* Photo tilt + scroll parallax (values set from script) */
+.photo { transform: perspective(900px) translateY(var(--py, 0px)) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .25s ease-out; }
+
+/* Heading words rise one by one */
+.sec-head h2 .w { display: inline-block; }
+.sec-head.wait:not(.in) h2 .w { opacity: 0; }
+.sec-head.wait.in h2 .w { animation: word-up .7s var(--ease) both; animation-delay: calc(var(--i) * 80ms + .15s); }
+@keyframes word-up { from { opacity: 0; transform: translateY(.55em) rotate(4deg); } }
+
+/* Skill tags pop in one by one */
+.reveal.wait:not(.in) .chips li { opacity: 0; }
+.reveal.wait.in .chips li { animation: chip-pop .45s var(--ease) both; animation-delay: calc(var(--d, 0s) + .35s + var(--ci, 0) * 55ms); }
+@keyframes chip-pop { from { opacity: 0; transform: scale(.5) translateY(8px); } }
+
+/* Timeline cards slide in from the right */
+.reveal.wait:not(.in).from-right { transform: translateX(40px); }
+
+/* Tap ripple */
+.ripple { position: absolute; border-radius: 50%; pointer-events: none; background: currentColor; opacity: .25; transform: scale(0); animation: ripple .6s ease-out forwards; }
+@keyframes ripple { to { transform: scale(1); opacity: 0; } }
+
+/* Cursor ring (mouse only) */
+.cursor-ring { position: fixed; left: 0; top: 0; z-index: 90; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; border: 1.5px solid var(--accent); pointer-events: none; opacity: 0; transition: width .25s var(--ease), height .25s var(--ease), margin .25s var(--ease), background .25s, opacity .3s; }
+.cursor-ring.show { opacity: .7; }
+.cursor-ring.big { width: 58px; height: 58px; margin: -29px 0 0 -29px; background: var(--glow); }
 
 /* ---------- Keyframes ---------- */
 @keyframes rise { from { opacity: 0; transform: translateY(18px); } }
@@ -379,8 +413,16 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .reveal.wait { opacity: 1; transform: none; }
+  .splash, .net, .cursor-ring { display: none; }
 }
 </style>
+
+<div class="splash" aria-hidden="true">
+  <div class="splash-box">
+    <div><span class="p">&gt;</span> <span class="t">booting sidharth.k</span></div>
+    <div class="splash-bar"><i></i></div>
+  </div>
+</div>
 
 <header class="top">
   <div class="wrap bar">
@@ -417,6 +459,7 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
   <section class="hero">
     <span class="aurora a" aria-hidden="true"></span>
     <span class="aurora b" aria-hidden="true"></span>
+    <canvas class="net" id="net" aria-hidden="true"></canvas>
     <div class="wrap">
       <div class="grid">
         <div>
@@ -592,7 +635,7 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
         <h2>Where I have <em>worked</em></h2>
       </div>
       <div class="timeline" id="timeline">
-        <article class="job now card reveal">
+        <article class="job now card reveal from-right">
           <div class="head">
             <div>
               <h3>Application Developer</h3>
@@ -611,7 +654,7 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
             <li>Use AI coding assistants, mainly Claude, to speed up development, debugging and troubleshooting.</li>
           </ul>
         </article>
-        <article class="job card reveal">
+        <article class="job card reveal from-right" style="--d: .1s">
           <div class="head">
             <div>
               <h3>Hardware &amp; Software Technician</h3>
@@ -696,6 +739,8 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
   <div class="wrap"><span>© 2026 Sidharth K</span><span><a href="https://www.linkedin.com/in/sidharth-k-860a7a192" target="_blank" rel="noopener">LinkedIn</a> · Built with HTML, CSS &amp; Claude</span></div>
 </footer>
 
+<div class="cursor-ring" id="cursor-ring" aria-hidden="true"></div>
+
 <button class="to-top" id="to-top" type="button" aria-label="Back to top">
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
 </button>
@@ -771,8 +816,29 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
         if (ci === word.length) { deleting = true; setTimeout(tick, 2200); } else setTimeout(tick, 70);
       }
     };
-    setTimeout(tick, 3200);
+    setTimeout(tick, 4100);
   }
+
+  /* Split section headings into words for the staggered rise */
+  document.querySelectorAll(".sec-head h2").forEach(function (h) {
+    var n = 0;
+    Array.prototype.slice.call(h.childNodes).forEach(function split(node) {
+      if (node.nodeType === 3) {
+        var frag = document.createDocumentFragment();
+        node.textContent.split(/(\s+)/).forEach(function (part) {
+          if (!part) return;
+          if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+          var w = document.createElement("span"); w.className = "w"; w.style.setProperty("--i", n++); w.textContent = part; frag.appendChild(w);
+        });
+        node.parentNode.replaceChild(frag, node);
+      } else if (node.nodeType === 1) {
+        Array.prototype.slice.call(node.childNodes).forEach(split);
+      }
+    });
+  });
+  document.querySelectorAll(".chips").forEach(function (ul) {
+    Array.prototype.forEach.call(ul.children, function (li, i) { li.style.setProperty("--ci", i); });
+  });
 
   /* Count-up numbers and scroll reveal: only items that start off-screen are hidden, so the first view is always complete */
   function countUp(el) {
@@ -821,6 +887,119 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
       spec.style.transform = "rotateY(" + (x * 8).toFixed(2) + "deg) rotateX(" + (-y * 8).toFixed(2) + "deg)";
     });
     spec.parentNode.addEventListener("pointerleave", function () { spec.style.transform = ""; });
+  }
+
+  /* Hero network: drifting nodes linked like a circuit, drawn toward the pointer */
+  var canvas = document.getElementById("net");
+  if (canvas && canvas.getContext && !reduce) {
+    var ctx = canvas.getContext("2d"), hero = canvas.parentNode;
+    var nodes = [], W = 0, H = 0, dpr = 1, color = "31,79,216", running = true, pointer = { x: -9999, y: -9999 };
+    var readColor = function () {
+      var c = getComputedStyle(root).getPropertyValue("--accent").trim(), m;
+      if ((m = c.match(/^#([0-9a-f]{6})$/i))) { var v = parseInt(m[1], 16); color = [(v >> 16) & 255, (v >> 8) & 255, v & 255].join(","); }
+    };
+    var resize = function () {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = hero.clientWidth; H = hero.clientHeight;
+      canvas.width = W * dpr; canvas.height = H * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      var count = Math.max(18, Math.min(70, Math.round(W * H / 16000)));
+      nodes = [];
+      for (var i = 0; i < count; i++) nodes.push({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .35, vy: (Math.random() - .5) * .35 });
+    };
+    var LINK = 130;
+    var draw = function () {
+      if (!running) return;
+      ctx.clearRect(0, 0, W, H);
+      for (var i = 0; i < nodes.length; i++) {
+        var a = nodes[i];
+        a.x += a.vx; a.y += a.vy;
+        if (a.x < 0 || a.x > W) a.vx *= -1;
+        if (a.y < 0 || a.y > H) a.vy *= -1;
+        var pdx = pointer.x - a.x, pdy = pointer.y - a.y, pd = Math.sqrt(pdx * pdx + pdy * pdy);
+        if (pd < 170) {
+          a.x += pdx * .006; a.y += pdy * .006;
+          ctx.strokeStyle = "rgba(" + color + "," + (0.5 * (1 - pd / 170)).toFixed(3) + ")";
+          ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(pointer.x, pointer.y); ctx.stroke();
+        }
+        for (var j = i + 1; j < nodes.length; j++) {
+          var b = nodes[j], dx = a.x - b.x, dy = a.y - b.y, d = dx * dx + dy * dy;
+          if (d < LINK * LINK) {
+            ctx.strokeStyle = "rgba(" + color + "," + (0.28 * (1 - Math.sqrt(d) / LINK)).toFixed(3) + ")";
+            ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+          }
+        }
+        ctx.fillStyle = "rgba(" + color + ",.55)";
+        ctx.beginPath(); ctx.arc(a.x, a.y, 1.8, 0, 6.283); ctx.fill();
+      }
+      requestAnimationFrame(draw);
+    };
+    readColor(); resize(); draw();
+    window.addEventListener("resize", resize);
+    new MutationObserver(readColor).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+    if (window.matchMedia) { var mq = matchMedia("(prefers-color-scheme: dark)"); if (mq.addEventListener) mq.addEventListener("change", readColor); }
+    hero.addEventListener("pointermove", function (e) { var r = hero.getBoundingClientRect(); pointer.x = e.clientX - r.left; pointer.y = e.clientY - r.top; });
+    hero.addEventListener("pointerleave", function () { pointer.x = pointer.y = -9999; });
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (en) { var vis = en[0].isIntersecting; if (vis && !running) { running = true; draw(); } else if (!vis) running = false; }).observe(hero);
+    }
+  }
+
+  /* Photo: gentle parallax on scroll, 3D tilt under the mouse */
+  var photo = document.querySelector(".photo");
+  if (photo && !reduce) {
+    window.addEventListener("scroll", function () {
+      photo.style.setProperty("--py", Math.min(80, (window.pageYOffset || 0) * 0.12).toFixed(1) + "px");
+    }, { passive: true });
+    if (finePointer) {
+      var pw = photo.parentNode;
+      pw.addEventListener("pointermove", function (e) {
+        var r = photo.getBoundingClientRect();
+        photo.style.setProperty("--ry", (((e.clientX - r.left) / r.width - .5) * 12).toFixed(2) + "deg");
+        photo.style.setProperty("--rx", (-((e.clientY - r.top) / r.height - .5) * 12).toFixed(2) + "deg");
+      });
+      pw.addEventListener("pointerleave", function () { photo.style.setProperty("--rx", "0deg"); photo.style.setProperty("--ry", "0deg"); });
+    }
+  }
+
+  /* Buttons: ripple on tap/click (all devices), magnetic pull (mouse only) */
+  document.querySelectorAll(".btn, .copy").forEach(function (btn) {
+    btn.addEventListener("pointerdown", function (e) {
+      if (reduce) return;
+      var r = btn.getBoundingClientRect(), size = Math.max(r.width, r.height) * 2.2;
+      var rip = document.createElement("span");
+      rip.className = "ripple";
+      rip.style.width = rip.style.height = size + "px";
+      rip.style.left = (e.clientX - r.left - size / 2) + "px";
+      rip.style.top = (e.clientY - r.top - size / 2) + "px";
+      if (getComputedStyle(btn).position === "static") btn.style.position = "relative";
+      btn.style.overflow = "hidden";
+      btn.appendChild(rip);
+      rip.addEventListener("animationend", function () { rip.remove(); });
+    });
+    if (finePointer && !reduce && btn.classList.contains("btn")) {
+      btn.addEventListener("pointermove", function (e) {
+        var r = btn.getBoundingClientRect();
+        btn.style.transform = "translate(" + ((e.clientX - r.left - r.width / 2) * .22).toFixed(1) + "px," + ((e.clientY - r.top - r.height / 2) * .3).toFixed(1) + "px)";
+      });
+      btn.addEventListener("pointerleave", function () { btn.style.transform = ""; });
+    }
+  });
+
+  /* Cursor ring that trails the mouse and grows over links and buttons */
+  var ring = document.getElementById("cursor-ring");
+  if (finePointer && !reduce && ring) {
+    var mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener("pointermove", function (e) {
+      mx = e.clientX; my = e.clientY; ring.classList.add("show");
+      ring.classList.toggle("big", !!(e.target.closest && e.target.closest("a, button")));
+    });
+    document.addEventListener("pointerleave", function () { ring.classList.remove("show"); });
+    (function follow() {
+      rx += (mx - rx) * .18; ry += (my - ry) * .18;
+      ring.style.transform = "translate(" + rx.toFixed(1) + "px," + ry.toFixed(1) + "px)";
+      requestAnimationFrame(follow);
+    })();
   }
 
   /* Copy buttons */
