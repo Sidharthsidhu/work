@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dev_oopss Trips</title>
+  <meta name="site-version" content="2026-10-17.1">
   <meta name="description" content="Dev_oopss — six friends escaping office work, one trip and staycation at a time.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -827,6 +828,22 @@
       shownDay = day;
       refreshTrips();
     }, 60000);
+    // Phones can keep an old copy of this page. Check for a newer one and reload once if found.
+    if (location.hostname.endsWith("github.io")) {
+      const mine = document.querySelector('meta[name="site-version"]').content;
+      fetch(location.pathname, { cache: "reload" })
+        .then(r => r.text())
+        .then(html => {
+          const latest = (html.match(/name="site-version" content="([^"]+)"/) || [])[1];
+          let tried = "";
+          try { tried = sessionStorage.getItem("devoopss-reloaded") || ""; } catch {}
+          if (latest && latest !== mine && tried !== latest) {
+            try { sessionStorage.setItem("devoopss-reloaded", latest); } catch {}
+            location.reload();
+          }
+        })
+        .catch(() => {});
+    }
   </script>
 </body>
 </html>
