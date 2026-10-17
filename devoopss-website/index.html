@@ -115,7 +115,8 @@
     .filters button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
     .trips { display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
     .trip { overflow: hidden; display: flex; flex-direction: column; }
-    .trip .banner { height: 120px; display: grid; place-items: center; font-size: 3.2rem; }
+    .trip .banner { height: 180px; display: grid; place-items: center; font-size: 3.2rem; overflow: hidden; }
+    .trip .banner img { width: 100%; height: 100%; object-fit: cover; object-position: center 75%; }
     .trip .body { padding: 18px 20px 20px; flex: 1; display: flex; flex-direction: column; gap: 6px; }
     .trip .tag {
       align-self: flex-start; font-size: 0.75rem; font-weight: 600; padding: 3px 10px; border-radius: 999px;
@@ -238,7 +239,7 @@
         note: "Our next escape. Plans are on in the group chat." },
       { title: "Varkala trip", place: "Varkala", date: "2026-09-26", emoji: "🏖️", color: "#d6ecff",
         note: "Trip number two: the cliffs and the beach at Varkala." },
-      { title: "Munnar staycation", place: "Munnar", date: "2026-07-04", emoji: "🏔️", color: "#fff0c2",
+      { title: "Munnar staycation", place: "Munnar", date: "2026-07-04", emoji: "🏔️", color: "#fff0c2", photo: "photos/trip-munnar.jpg",
         note: "Where it all started: our first trip together, a staycation up in Munnar." },
     ];
 
@@ -265,7 +266,7 @@
         const up = isUpcoming(t);
         return `
         <article class="card trip">
-          <div class="banner" style="background:${t.color}">${t.emoji}</div>
+          <div class="banner" style="background:${t.color}">${t.photo ? `<img src="${t.photo}" alt="${t.title}">` : t.emoji}</div>
           <div class="body">
             <span class="tag ${up ? "upcoming" : ""}">${up ? "Upcoming" : "Done ✓"}</span>
             <h3>${t.title}</h3>
