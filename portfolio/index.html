@@ -180,7 +180,7 @@ section[id] { scroll-margin-top: calc(var(--head-h) + env(safe-area-inset-top, 0
 .spec .bar-row { padding: 8px 16px 4px; border-top: 1px dashed var(--line); margin-top: 6px; }
 .meter { display: grid; grid-template-columns: 84px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 4px 0; color: var(--muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: .06em; }
 .meter .track { height: 6px; border-radius: 6px; background: var(--accent-soft); overflow: hidden; }
-.meter .fill { display: block; height: 100%; border-radius: 6px; background: linear-gradient(90deg, var(--accent), var(--amber)); transform-origin: 0 50%; animation: fill 1.4s var(--ease) both; }
+.meter .fill { display: block; height: 100%; border-radius: 6px; background: linear-gradient(90deg, var(--accent), var(--amber)); transform-origin: 0 50%; }
 .meter span:last-child { color: var(--fg); font-variant-numeric: tabular-nums; }
 
 /* Hero load sequence */
@@ -189,13 +189,38 @@ section[id] { scroll-margin-top: calc(var(--head-h) + env(safe-area-inset-top, 0
 .hero .role { animation: rise .6s var(--ease) .55s both; }
 .hero .lede { animation: rise .6s var(--ease) .7s both; }
 .hero .actions { animation: rise .6s var(--ease) .85s both; }
-.spec-wrap { animation: slide-in .8s var(--ease) .35s both; }
-.spec .row { animation: boot .35s ease-out both; }
-.spec .row:nth-child(1) { animation-delay: .9s; } .spec .row:nth-child(2) { animation-delay: 1.02s; }
-.spec .row:nth-child(3) { animation-delay: 1.14s; } .spec .row:nth-child(4) { animation-delay: 1.26s; }
-.spec .row:nth-child(5) { animation-delay: 1.38s; } .spec .row:nth-child(6) { animation-delay: 1.5s; }
-.spec .row:nth-child(7) { animation-delay: 1.62s; } .spec .row:nth-child(8) { animation-delay: 1.74s; }
-.meter:nth-child(1) .fill { animation-delay: 1.9s; } .meter:nth-child(2) .fill { animation-delay: 2.05s; } .meter:nth-child(3) .fill { animation-delay: 2.2s; }
+.spec.on .row { animation: boot .35s ease-out both; }
+.spec.on .row:nth-child(1) { animation-delay: .1s; } .spec.on .row:nth-child(2) { animation-delay: .22s; }
+.spec.on .row:nth-child(3) { animation-delay: .34s; } .spec.on .row:nth-child(4) { animation-delay: .46s; }
+.spec.on .row:nth-child(5) { animation-delay: .58s; } .spec.on .row:nth-child(6) { animation-delay: .7s; }
+.spec.on .row:nth-child(7) { animation-delay: .82s; } .spec.on .row:nth-child(8) { animation-delay: .94s; }
+.spec.on .fill { animation: fill 1.4s var(--ease) both; }
+.spec.on .meter:nth-child(1) .fill { animation-delay: 1.1s; } .spec.on .meter:nth-child(2) .fill { animation-delay: 1.25s; } .spec.on .meter:nth-child(3) .fill { animation-delay: 1.4s; }
+
+/* Photo */
+@property --ang { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+.photo-wrap { position: relative; justify-self: end; width: min(100%, 420px); animation: slide-in .9s var(--ease) .3s both; }
+.photo { margin: 0; position: relative; border-radius: 28px; padding: 3px; background: conic-gradient(from var(--ang), var(--accent), var(--amber), var(--accent-soft), var(--accent)); animation: spin 6s linear infinite; box-shadow: 0 30px 70px -34px rgba(20, 30, 60, .55); }
+.photo img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 30%; border-radius: 25px; background: var(--surface); animation: photo-in 1.2s cubic-bezier(.7,0,.2,1) .45s both; }
+.float-chip { position: absolute; z-index: 2; display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--fg); font: 500 0.8rem var(--mono); white-space: nowrap; box-shadow: 0 14px 30px -16px rgba(20, 30, 60, .45); }
+.float-chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); animation: pulse 2.4s infinite; }
+.float-chip b { font: 800 1.05rem var(--display); color: var(--accent); }
+.float-chip.c1 { top: 9%; left: -34px; animation: pop .5s var(--ease) 1.4s both, bob 5s ease-in-out 2s infinite alternate; }
+.float-chip.c2 { bottom: 11%; right: -26px; animation: pop .5s var(--ease) 1.6s both, bob 6s ease-in-out 2.2s infinite alternate-reverse; }
+@media (max-width: 1100px) { .float-chip.c1 { left: -12px; } .float-chip.c2 { right: -10px; } }
+@media (max-width: 880px) {
+  .photo-wrap { order: -1; justify-self: start; width: min(72%, 300px); }
+  .photo { border-radius: 24px; }
+  .photo img { aspect-ratio: 1 / 1; border-radius: 21px; object-position: 50% 22%; }
+  .float-chip { font-size: .72rem; padding: 7px 11px; }
+  .float-chip.c1 { left: 10px; right: auto; top: auto; bottom: 12px; }
+  .float-chip.c2 { right: -14px; top: 14px; bottom: auto; }
+}
+
+/* About intro + profile card */
+.about-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 440px); gap: clamp(28px, 5vw, 56px); align-items: center; margin-bottom: clamp(28px, 4vw, 44px); }
+.about-top .sec-head { margin-bottom: 0; }
+@media (max-width: 880px) { .about-top { grid-template-columns: minmax(0, 1fr); } }
 
 /* ---------- Stats + ticker ---------- */
 .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: 14px; background: var(--surface); margin-top: clamp(40px, 6vw, 64px); overflow: hidden; }
@@ -341,6 +366,10 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
 @keyframes slide-in { from { opacity: 0; transform: translateX(32px); } }
 @keyframes boot { from { opacity: 0; transform: translateX(-8px); } }
 @keyframes fill { from { transform: scaleX(0); } }
+@keyframes spin { to { --ang: 360deg; } }
+@keyframes photo-in { from { clip-path: inset(100% 0 0 0 round 25px); transform: scale(1.12); } to { clip-path: inset(0 0 0 0 round 25px); transform: none; } }
+@keyframes pop { from { opacity: 0; transform: scale(.6) translateY(10px); } }
+@keyframes bob { to { transform: translateY(-10px); } }
 @keyframes bounce-in { 0% { transform: scale(0); } 60% { transform: scale(1.4); } 100% { transform: scale(1); } }
 @keyframes blink { 50% { opacity: 0; } }
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
@@ -409,25 +438,12 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
           </div>
         </div>
 
-        <div class="spec-wrap">
-          <aside class="spec" id="spec" aria-label="Quick profile">
-            <div class="spec-head"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span>system_info</span><span class="status">online</span></div>
-            <dl>
-              <div class="row"><dt>Role</dt><dd>Application Developer</dd></div>
-              <div class="row"><dt>Company</dt><dd>Amplitude Software System</dd></div>
-              <div class="row"><dt>Stack</dt><dd><span class="hl">.NET</span> · C# · VB.NET · SQL Server</dd></div>
-              <div class="row"><dt>AI</dt><dd><span class="hl">Claude</span> · vibe coding · AI features</dd></div>
-              <div class="row"><dt>In IT</dt><dd>since Mar 2021 <span class="hl">(5+ yrs)</span></dd></div>
-              <div class="row"><dt>Location</dt><dd>Nilambur, Malappuram, Kerala</dd></div>
-              <div class="row"><dt>Speaks</dt><dd>English · Malayalam · Hindi</dd></div>
-              <div class="row"><dt>Learning</dt><dd>Microsoft Azure <span class="warn">[in progress]</span><span class="cursor" aria-hidden="true"></span></dd></div>
-            </dl>
-            <div class="bar-row" aria-label="Focus areas">
-              <div class="meter"><span>.NET</span><span class="track"><span class="fill" style="width: 90%"></span></span><span>core</span></div>
-              <div class="meter"><span>AI</span><span class="track"><span class="fill" style="width: 75%"></span></span><span>daily</span></div>
-              <div class="meter"><span>Hardware</span><span class="track"><span class="fill" style="width: 80%"></span></span><span>2 yrs</span></div>
-            </div>
-          </aside>
+        <div class="photo-wrap">
+          <figure class="photo">
+            <img src="assets/sidharth.jpg" alt="Portrait of Sidharth K" width="720" height="900" fetchpriority="high">
+          </figure>
+          <span class="float-chip c1"><i aria-hidden="true"></i>Claude + .NET</span>
+          <span class="float-chip c2"><b>5+</b> yrs in IT</span>
         </div>
       </div>
 
@@ -453,10 +469,32 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
 
   <section class="block" id="about">
     <div class="wrap">
+      <div class="about-top">
       <div class="sec-head reveal">
         <p class="eyebrow">About</p>
         <h2>Three things I <em>bring</em></h2>
         <p>Most developers never open a computer case. Most technicians never ship a web app. I have done both, and I now use AI to build faster than either job allowed on its own.</p>
+      </div>
+      <div class="spec-wrap reveal">
+      <aside class="spec" id="spec" aria-label="Quick profile">
+        <div class="spec-head"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span>system_info</span><span class="status">online</span></div>
+        <dl>
+          <div class="row"><dt>Role</dt><dd>Application Developer</dd></div>
+          <div class="row"><dt>Company</dt><dd>Amplitude Software System</dd></div>
+          <div class="row"><dt>Stack</dt><dd><span class="hl">.NET</span> · C# · VB.NET · SQL Server</dd></div>
+          <div class="row"><dt>AI</dt><dd><span class="hl">Claude</span> · vibe coding · AI features</dd></div>
+          <div class="row"><dt>In IT</dt><dd>since Mar 2021 <span class="hl">(5+ yrs)</span></dd></div>
+          <div class="row"><dt>Location</dt><dd>Nilambur, Malappuram, Kerala</dd></div>
+          <div class="row"><dt>Speaks</dt><dd>English · Malayalam · Hindi</dd></div>
+          <div class="row"><dt>Learning</dt><dd>Microsoft Azure <span class="warn">[in progress]</span><span class="cursor" aria-hidden="true"></span></dd></div>
+        </dl>
+        <div class="bar-row" aria-label="Focus areas">
+          <div class="meter"><span>.NET</span><span class="track"><span class="fill" style="width: 90%"></span></span><span>core</span></div>
+          <div class="meter"><span>AI</span><span class="track"><span class="fill" style="width: 75%"></span></span><span>daily</span></div>
+          <div class="meter"><span>Hardware</span><span class="track"><span class="fill" style="width: 80%"></span></span><span>2 yrs</span></div>
+        </div>
+      </aside>
+        </div>
       </div>
       <div class="grid-3">
         <article class="card reveal">
@@ -768,6 +806,10 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
       if (el.getBoundingClientRect().top > window.innerHeight) { el.classList.add("wait"); io.observe(el); }
     });
     document.querySelectorAll("[data-count]").forEach(function (el) { io.observe(el); });
+    var specIo = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("on"); specIo.unobserve(e.target); } });
+    }, { threshold: 0.3 });
+    specIo.observe(document.getElementById("spec"));
   }
 
   /* Card spotlight + spec tilt (mouse only) */
