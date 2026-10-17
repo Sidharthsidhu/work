@@ -414,10 +414,13 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
 @keyframes signal { 0%, 30%, 100% { background: transparent; color: var(--fg); } 10%, 20% { background: var(--accent); color: var(--bg); } }
 
 @media (prefers-reduced-motion: reduce) {
+  /* Reduced motion: keep fades, typing, counters and highlights; drop large or endless movement */
   html { scroll-behavior: auto; }
-  *, *::before, *::after { animation: none !important; transition: none !important; }
-  .reveal.wait { opacity: 1; transform: none; }
-  .splash, .net, .cursor-ring { display: none; }
+  .aurora, .contact-card::before { animation: none; }
+  .float-chip.c1, .float-chip.c2 { animation: pop .5s var(--ease) calc(var(--intro) + 1.4s) both; }
+  .ticker-track { animation-duration: 90s; }
+  .reveal.wait:not(.in), .reveal.wait:not(.in).from-left, .reveal.wait:not(.in).from-right { transform: none; }
+  .cursor-ring { display: none; }
 }
 </style>
 </head>
@@ -809,7 +812,7 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
   /* Typing headline (starts after the hero intro; the first phrase is already in the HTML) */
   var typed = document.getElementById("typed");
   var phrases = ["builds with AI", "ships ASP.NET apps", "turns PDFs into data", "fixes the hardware too"];
-  if (!reduce) {
+  {
     var pi = 0, ci = phrases[0].length, deleting = true;
     var tick = function () {
       var word = phrases[pi];
@@ -858,7 +861,7 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
     }
     requestAnimationFrame(step);
   }
-  if (!reduce && "IntersectionObserver" in window) {
+  if ("IntersectionObserver" in window) {
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
         if (!e.isIntersecting) return;
@@ -897,7 +900,8 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
 
   /* Hero network: drifting nodes linked like a circuit, drawn toward the pointer */
   var canvas = document.getElementById("net");
-  if (canvas && canvas.getContext && !reduce) {
+  if (canvas && canvas.getContext) {
+    var speed = reduce ? .35 : 1;
     var ctx = canvas.getContext("2d"), hero = canvas.parentNode;
     var nodes = [], W = 0, H = 0, dpr = 1, color = "31,79,216", running = true, pointer = { x: -9999, y: -9999 };
     var readColor = function () {
@@ -911,7 +915,7 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       var count = Math.max(18, Math.min(70, Math.round(W * H / 16000)));
       nodes = [];
-      for (var i = 0; i < count; i++) nodes.push({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .35, vy: (Math.random() - .5) * .35 });
+      for (var i = 0; i < count; i++) nodes.push({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .35 * speed, vy: (Math.random() - .5) * .35 * speed });
     };
     var LINK = 130;
     var draw = function () {
@@ -971,7 +975,6 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
   /* Buttons: ripple on tap/click (all devices), magnetic pull (mouse only) */
   document.querySelectorAll(".btn, .copy").forEach(function (btn) {
     btn.addEventListener("pointerdown", function (e) {
-      if (reduce) return;
       var r = btn.getBoundingClientRect(), size = Math.max(r.width, r.height) * 2.2;
       var rip = document.createElement("span");
       rip.className = "ripple";
