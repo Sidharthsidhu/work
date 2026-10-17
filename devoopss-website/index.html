@@ -115,8 +115,10 @@
     .filters button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
     .trips { display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
     .trip { overflow: hidden; display: flex; flex-direction: column; }
-    .trip .banner { height: 180px; display: grid; place-items: center; font-size: 3.2rem; overflow: hidden; }
-    .trip .banner img { width: 100%; height: 100%; object-fit: cover; object-position: center 75%; }
+    .trip .banner { position: relative; height: 180px; display: grid; place-items: center; font-size: 3.2rem; overflow: hidden; }
+    .trip .banner img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 75%; opacity: 0; transition: opacity 0.8s ease; }
+    .trip .banner img.on { opacity: 1; }
+    @media (prefers-reduced-motion: reduce) { .trip .banner img { transition: none; } }
     .trip .body { padding: 18px 20px 20px; flex: 1; display: flex; flex-direction: column; gap: 6px; }
     .trip .tag {
       align-self: flex-start; font-size: 0.75rem; font-weight: 600; padding: 3px 10px; border-radius: 999px;
@@ -221,6 +223,7 @@
     // ====== EDIT THIS PART ======
     // Change names, emojis and trips here. Dates use YYYY-MM-DD.
     // To show a photo instead of an emoji, put it in the photos/ folder and add photo: "photos/name.jpg".
+    // A trip can show several photos in turn: photos: ["photos/a.jpg", "photos/b.jpg"].
 
     const INSTAGRAM_URL = "https://www.instagram.com/dev_oopss/";
 
@@ -239,7 +242,7 @@
         note: "Our next escape. Plans are on in the group chat." },
       { title: "Varkala trip", place: "Varkala", date: "2026-09-26", emoji: "🛶", color: "#d6ecff", photo: "photos/trip-varkala.jpg",
         note: "Trip number two: kayaking through the mangroves at Varkala." },
-      { title: "Munnar staycation", place: "Munnar", date: "2026-07-04", emoji: "🏔️", color: "#fff0c2", photo: "photos/trip-munnar.jpg",
+      { title: "Munnar staycation", place: "Munnar", date: "2026-07-04", emoji: "🏔️", color: "#fff0c2", photos: ["photos/trip-munnar-view.jpg", "photos/trip-munnar.jpg"],
         note: "Where it all started: our first trip together, a staycation up in Munnar." },
     ];
 
@@ -264,9 +267,10 @@
         .filter(t => filter === "all" || (filter === "upcoming") === isUpcoming(t));
       document.getElementById("trip-list").innerHTML = list.map(t => {
         const up = isUpcoming(t);
+        const pics = t.photos || (t.photo ? [t.photo] : []);
         return `
         <article class="card trip">
-          <div class="banner" style="background:${t.color}">${t.photo ? `<img src="${t.photo}" alt="${t.title}">` : t.emoji}</div>
+          <div class="banner" style="background:${t.color}">${pics.length ? pics.map((p, i) => `<img src="${p}" alt="${t.title}" class="${i ? "" : "on"}">`).join("") : t.emoji}</div>
           <div class="body">
             <span class="tag ${up ? "upcoming" : ""}">${up ? "Upcoming" : "Done ✓"}</span>
             <h3>${t.title}</h3>
@@ -284,6 +288,17 @@
       renderTrips(btn.dataset.filter);
     });
     renderTrips("all");
+
+    // Trips with several photos switch between them every few seconds
+    setInterval(() => {
+      document.querySelectorAll(".trip .banner").forEach(b => {
+        const imgs = b.querySelectorAll("img");
+        if (imgs.length < 2) return;
+        const i = [...imgs].findIndex(img => img.classList.contains("on"));
+        imgs[i].classList.remove("on");
+        imgs[(i + 1) % imgs.length].classList.add("on");
+      });
+    }, 4000);
 
     // Countdown to the next upcoming trip
     const upcoming = trips.filter(isUpcoming);
