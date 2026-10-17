@@ -232,17 +232,14 @@
       { name: "Prajitha", role: "Budget keeper",      emoji: "💰", color: "#d6ecff", photo: "photos/prajitha.jpg" },
     ];
 
+    // Newest first. Leave date as "" until it's fixed; set upcoming: true for a trip still to come.
     const trips = [
-      { title: "Hill station weekend", place: "Somewhere cool and green", date: "2026-11-21", emoji: "🏔️", color: "#cfeee0",
-        note: "Bonfire, maggi at midnight, and a sunrise hike nobody will wake up for." },
-      { title: "New Year staycation", place: "A villa with a pool", date: "2026-12-31", emoji: "🎉", color: "#ffe0d1",
-        note: "Board games, too much food, and the countdown together." },
-      { title: "Beach day out", place: "Nearest beach", date: "2026-09-13", emoji: "🏖️", color: "#d6ecff",
-        note: "Sand everywhere, sunburnt noses, zero regrets." },
-      { title: "Lake-side staycation", place: "Resort by the lake", date: "2026-07-25", emoji: "🛶", color: "#e3dcff",
-        note: "Kayaking, karaoke and the best sleep of the year." },
-      { title: "The first trip", place: "Where it all started", date: "2026-04-05", emoji: "🚗", color: "#fff0c2",
-        note: "The road trip that turned a group chat into a gang." },
+      { title: "Wayanad trip", place: "Wayanad", date: "", upcoming: true, emoji: "🌿", color: "#cfeee0",
+        note: "Our next escape. Plans are on in the group chat." },
+      { title: "Varkala trip", place: "Varkala", date: "", emoji: "🏖️", color: "#d6ecff",
+        note: "Trip number two: the cliffs and the beach at Varkala." },
+      { title: "Munnar staycation", place: "Munnar", date: "", emoji: "🏔️", color: "#fff0c2",
+        note: "Where it all started: our first trip together, a staycation up in Munnar." },
     ];
 
     // ====== END OF EDIT PART ======
@@ -251,8 +248,8 @@
 
     const today = new Date(); today.setHours(0, 0, 0, 0);
     const parse = d => new Date(d + "T00:00:00");
-    const fmt = d => parse(d).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
-    const isUpcoming = t => parse(t.date) >= today;
+    const fmt = d => d ? parse(d).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }) : "Date to be decided";
+    const isUpcoming = t => t.date ? parse(t.date) >= today : !!t.upcoming;
 
     document.getElementById("crew-list").innerHTML = crew.map(m => `
       <div class="card member">
@@ -263,8 +260,7 @@
 
     function renderTrips(filter) {
       const list = trips
-        .filter(t => filter === "all" || (filter === "upcoming") === isUpcoming(t))
-        .sort((a, b) => parse(b.date) - parse(a.date));
+        .filter(t => filter === "all" || (filter === "upcoming") === isUpcoming(t));
       document.getElementById("trip-list").innerHTML = list.map(t => {
         const up = isUpcoming(t);
         return `
@@ -289,7 +285,8 @@
     renderTrips("all");
 
     // Countdown to the next upcoming trip
-    const next = trips.filter(isUpcoming).sort((a, b) => parse(a.date) - parse(b.date))[0];
+    const upcoming = trips.filter(isUpcoming);
+    const next = upcoming.filter(t => t.date).sort((a, b) => parse(a.date) - parse(b.date))[0] || upcoming[0];
     const box = document.getElementById("next-trip");
     if (!next) {
       box.innerHTML = `<div><div class="label">Next trip</div><h3>Not planned yet 👀</h3><div class="meta">Someone open the group chat.</div></div>`;
@@ -300,19 +297,21 @@
           <h3>${next.emoji} ${next.title}</h3>
           <div class="meta">📍 ${next.place} · ${fmt(next.date)}</div>
         </div>
-        <div class="countdown">
+        ${next.date ? `<div class="countdown">
           <div><b id="cd-d">0</b><small>days</small></div>
           <div><b id="cd-h">0</b><small>hours</small></div>
           <div><b id="cd-m">0</b><small>mins</small></div>
-        </div>`;
+        </div>` : ""}`;
       const tick = () => {
         const diff = Math.max(0, parse(next.date) - new Date());
         document.getElementById("cd-d").textContent = Math.floor(diff / 864e5);
         document.getElementById("cd-h").textContent = Math.floor(diff / 36e5) % 24;
         document.getElementById("cd-m").textContent = Math.floor(diff / 6e4) % 60;
       };
-      tick();
-      setInterval(tick, 30000);
+      if (next.date) {
+        tick();
+        setInterval(tick, 30000);
+      }
     }
   </script>
 </body>
