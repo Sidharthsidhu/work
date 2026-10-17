@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dev_oopss Trips</title>
-  <meta name="site-version" content="2026-10-17.4">
+  <meta name="site-version" content="2026-10-17.5">
   <meta name="description" content="Dev_oopss — six friends escaping office work, one trip and staycation at a time.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -177,6 +177,22 @@
       font: inherit; font-size: 0.85rem; font-weight: 600; border: 1px solid var(--border); background: var(--bg); color: var(--text);
     }
     .gallery-open:hover { border-color: var(--accent); color: var(--accent); }
+    .gallery-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .gallery-actions .gallery-open { margin-top: 0; }
+    .gallery-add {
+      padding: 6px 14px; border-radius: 999px; cursor: pointer; font: inherit; font-size: 0.85rem; font-weight: 600;
+      border: 1px solid var(--accent); background: var(--accent); color: #fff;
+    }
+    .gallery-add:hover { filter: brightness(1.08); }
+    .toast {
+      position: fixed; left: 50%; bottom: max(16px, env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 60;
+      width: min(360px, calc(100% - 32px)); padding: 12px 16px; border-radius: 14px; box-shadow: var(--shadow);
+      background: var(--text); color: var(--bg); font-weight: 500; font-size: 0.95rem;
+    }
+    .toast[hidden] { display: none; }
+    .toast.err { white-space: pre-line; }
+    .toast .bar { height: 4px; margin-top: 8px; border-radius: 4px; background: color-mix(in srgb, var(--bg) 25%, transparent); overflow: hidden; }
+    .toast .bar i { display: block; height: 100%; width: 0; background: var(--accent); transition: width 0.2s ease; }
 
     dialog.viewer {
       width: 100vw; height: 100vh; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0;
@@ -413,6 +429,9 @@
     </div>
   </footer>
 
+  <input type="file" id="up-input" accept="image/*,video/*" multiple hidden>
+  <div class="toast" id="toast" role="status" hidden><span id="toast-text"></span><div class="bar"><i id="toast-bar"></i></div></div>
+
   <dialog class="viewer" id="viewer" aria-label="Trip photos and videos">
     <div class="v-top">
       <span id="v-title"></span>
@@ -457,6 +476,11 @@
     // Trip memories go in gallery: ["photos/gallery/goa/01.jpg", "photos/gallery/goa/02.mp4", "youtube:VIDEO_ID"].
 
     const INSTAGRAM_URL = "https://www.instagram.com/dev_oopss/";
+
+    // Photos added from the site go to this free Cloudinary account.
+    // While CLOUD_NAME is empty, the "+ Add photos" buttons stay hidden.
+    const CLOUD_NAME = "";
+    const UPLOAD_PRESET = "devoopss_uploads";
 
     const crew = [
       { name: "Sidharth", role: "Trip planner",     emoji: "🗺️", color: "#ffd6c9", photo: "photos/sidharth.jpg" },
@@ -505,17 +529,20 @@
     const thumbOf = src => mediaKind(src) === "youtube"
       ? `https://i.ytimg.com/vi/${encodeURIComponent(src.slice(8))}/hqdefault.jpg`
       : src.replace(/([^/]+)\.\w+$/, "thumbs/$1.jpg");
+    // Gallery entries are a path string, or { kind, src, thumb } for photos uploaded from the site
+    const asMedia = it => typeof it === "string" ? { kind: mediaKind(it), src: it, thumb: thumbOf(it) } : it;
     const galleryHtml = t => {
-      const g = t.gallery || [];
-      if (!g.length) return "";
+      const g = (t.gallery || []).map(asMedia);
       const id = trips.indexOf(t);
-      const photos = g.filter(s => mediaKind(s) === "image").length, videos = g.length - photos;
+      const add = CLOUD_NAME ? `<button type="button" class="gallery-add" data-add="${id}">+ Add photos</button>` : "";
+      if (!g.length) return add && `<div class="gallery-actions">${add}</div>`;
+      const photos = g.filter(m => m.kind === "image").length, videos = g.length - photos;
       const label = [photos && `📸 ${photos} photo${photos > 1 ? "s" : ""}`, videos && `🎬 ${videos} video${videos > 1 ? "s" : ""}`].filter(Boolean).join(" · ");
-      const strip = g.length < 2 ? "" : `<div class="gallery-strip">${g.slice(0, 4).map((s, i) => `
+      const strip = g.length < 2 ? "" : `<div class="gallery-strip">${g.slice(0, 4).map((m, i) => `
         <button type="button" class="g-thumb" data-trip="${id}" data-i="${i}" aria-label="Open ${i + 1} of ${g.length}">
-          <img src="${esc(thumbOf(s))}" alt="" loading="lazy">${mediaKind(s) === "image" ? "" : `<span class="play">▶</span>`}${i === 3 && g.length > 4 ? `<span class="more">+${g.length - 4}</span>` : ""}
+          <img src="${esc(m.thumb)}" alt="" loading="lazy">${m.kind === "image" ? "" : `<span class="play">▶</span>`}${i === 3 && g.length > 4 ? `<span class="more">+${g.length - 4}</span>` : ""}
         </button>`).join("")}</div>`;
-      return `${strip}<button type="button" class="gallery-open" data-trip="${id}" data-i="0">${label} · View</button>`;
+      return `${strip}<div class="gallery-actions"><button type="button" class="gallery-open" data-trip="${id}" data-i="0">${label} · View</button>${add}</div>`;
     };
 
     let currentFilter = "all";
@@ -916,18 +943,18 @@
     const stage = document.getElementById("v-stage");
     let vItems = [], vIndex = 0, vTitle = "";
     function showMedia() {
-      const src = vItems[vIndex], kind = mediaKind(src);
-      stage.innerHTML = kind === "image"
-        ? `<img src="${esc(src)}" alt="${esc(vTitle)}, ${vIndex + 1} of ${vItems.length}" draggable="false">`
-        : kind === "video"
-          ? `<video src="${esc(src)}" poster="${esc(thumbOf(src))}" controls playsinline preload="metadata"></video>`
-          : `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(src.slice(8))}" title="${esc(vTitle)} video" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+      const m = asMedia(vItems[vIndex]);
+      stage.innerHTML = m.kind === "image"
+        ? `<img src="${esc(m.src)}" alt="${esc(vTitle)}, ${vIndex + 1} of ${vItems.length}" draggable="false">`
+        : m.kind === "video"
+          ? `<video src="${esc(m.src)}" poster="${esc(m.thumb)}" controls playsinline preload="metadata"></video>`
+          : `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(m.src.slice(8))}" title="${esc(vTitle)} video" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
       document.getElementById("v-count").textContent = `${vIndex + 1} / ${vItems.length}`;
       document.getElementById("v-prev").hidden = document.getElementById("v-next").hidden = vItems.length < 2;
       // Load the neighbouring photos early so swiping feels instant
       [vIndex - 1, vIndex + 1].forEach(i => {
-        const s = vItems[(i + vItems.length) % vItems.length];
-        if (mediaKind(s) === "image") new Image().src = s;
+        const n = asMedia(vItems[(i + vItems.length) % vItems.length]);
+        if (n.kind === "image") new Image().src = n.src;
       });
     }
     const step = d => {
@@ -970,6 +997,126 @@
       const btn = e.target.closest("[data-trip]");
       if (btn) openGallery(trips[+btn.dataset.trip], +btn.dataset.i);
     });
+
+    // ===== Photos & videos added from the site (stored on Cloudinary) =====
+    const cloudBase = `https://res.cloudinary.com/${CLOUD_NAME}`;
+    const tripTag = t => "devoopss-" + `${t.title}-${t.date || ""}`.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    const fromCloud = (r, kind) => {
+      const path = `v${r.version}/${r.public_id}`;
+      return kind === "video"
+        ? { kind, at: r.created_at, src: `${cloudBase}/video/upload/q_auto,vc_auto,w_1280,c_limit/${path}.mp4`, thumb: `${cloudBase}/video/upload/so_1,c_fill,g_auto,w_360,h_360/${path}.jpg` }
+        : { kind, at: r.created_at, src: `${cloudBase}/image/upload/q_auto,w_1600,c_limit/${path}.jpg`, thumb: `${cloudBase}/image/upload/q_auto,c_fill,g_auto,w_360,h_360/${path}.jpg` };
+    };
+
+    // Show everything the group has uploaded, after each trip's own photos
+    async function loadCloudPhotos() {
+      await Promise.all(trips.map(async t => {
+        const lists = await Promise.all(["image", "video"].map(kind =>
+          fetch(`${cloudBase}/${kind}/list/${tripTag(t)}.json?_=${Date.now()}`)
+            .then(r => r.ok ? r.json() : { resources: [] })
+            .then(d => (d.resources || []).map(r => fromCloud(r, kind)))
+            .catch(() => [])));
+        const added = lists.flat().sort((a, b) => (a.at < b.at ? -1 : 1));
+        if (added.length) t.gallery = [...(t.gallery || []), ...added];
+      }));
+      refreshTrips();
+    }
+
+    const toastEl = document.getElementById("toast");
+    const toast = (text, progress, isError) => {
+      toastEl.hidden = false;
+      document.getElementById("toast-text").textContent = text;
+      document.getElementById("toast-bar").style.width = Math.round(progress * 100) + "%";
+      toastEl.classList.toggle("err", !!isError);
+    };
+
+    // Phone photos are large; shrink them before uploading
+    const shrinkBlob = file => new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const k = Math.min(1, 2000 / Math.max(img.width, img.height));
+        const c = document.createElement("canvas");
+        c.width = Math.round(img.width * k);
+        c.height = Math.round(img.height * k);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(img.src);
+        c.toBlob(b => (b ? resolve(b) : reject(new Error("shrink failed"))), "image/jpeg", 0.85);
+      };
+      img.onerror = () => reject(new Error("can't read")); // e.g. HEIC outside Safari: upload as it is
+      img.src = URL.createObjectURL(file);
+    });
+
+    function uploadOne(file, trip, onProgress) {
+      const isVideo = file.type.startsWith("video/") || /\.(mp4|mov|m4v|webm|3gp)$/i.test(file.name);
+      const isImage = file.type.startsWith("image/") || /\.(jpe?g|png|webp|heic|heif|gif)$/i.test(file.name);
+      return (async () => {
+        if (!isVideo && !isImage) throw new Error("only photos and videos can be added");
+        if (isVideo && file.size > 100e6) throw new Error("videos must be under 100 MB");
+        let body = file, name = file.name;
+        if (isImage) {
+          try {
+            body = await shrinkBlob(file);
+            name = name.replace(/\.\w+$/, "") + ".jpg";
+          } catch {}
+          if (body.size > 10e6) throw new Error("photos must be under 10 MB");
+        }
+        const form = new FormData();
+        form.append("file", body, name);
+        form.append("upload_preset", UPLOAD_PRESET);
+        form.append("tags", `devoopss,${tripTag(trip)}`);
+        const res = await new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open("POST", `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${isVideo ? "video" : "image"}/upload`);
+          xhr.upload.onprogress = e => e.lengthComputable && onProgress(e.loaded / e.total);
+          xhr.onload = () => {
+            let d = {};
+            try { d = JSON.parse(xhr.responseText); } catch {}
+            if (xhr.status < 300) resolve(d);
+            else reject(new Error((d.error && d.error.message) || `upload failed (${xhr.status})`));
+          };
+          xhr.onerror = () => reject(new Error("no internet connection"));
+          xhr.send(form);
+        });
+        return fromCloud(res, isVideo ? "video" : "image");
+      })();
+    }
+
+    const upInput = document.getElementById("up-input");
+    let upTrip = null;
+    document.getElementById("trip-list").addEventListener("click", e => {
+      const btn = e.target.closest("[data-add]");
+      if (!btn) return;
+      upTrip = trips[+btn.dataset.add];
+      upInput.value = "";
+      upInput.click();
+    });
+    upInput.addEventListener("change", async () => {
+      const files = [...upInput.files], trip = upTrip;
+      if (!files.length || !trip) return;
+      let added = 0;
+      const failed = [];
+      for (const [i, file] of files.entries()) {
+        const label = `Uploading ${i + 1} of ${files.length} to ${trip.title}…`;
+        toast(label, i / files.length);
+        try {
+          const item = await uploadOne(file, trip, p => toast(label, (i + p) / files.length));
+          trip.gallery = [...(trip.gallery || []), item];
+          added++;
+          refreshTrips();
+        } catch (err) {
+          failed.push(`${file.name}: ${err.message}`);
+        }
+      }
+      if (failed.length) {
+        toast(`Added ${added} of ${files.length}. These didn't upload:\n${failed.join("\n")}`, 1, true);
+      } else {
+        toast(`Added ${added} to ${trip.title} 🎉`, 1);
+        burst(innerWidth / 2, innerHeight - 90);
+      }
+      setTimeout(() => { toastEl.hidden = true; }, failed.length ? 9000 : 3500);
+    });
+
+    if (CLOUD_NAME) loadCloudPhotos();
 
     // Phones can keep an old copy of this page. Check for a newer one and reload once if found.
     if (location.hostname.endsWith("github.io")) {
