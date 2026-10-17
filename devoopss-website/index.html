@@ -118,7 +118,6 @@
     .trip .banner { position: relative; height: 180px; display: grid; place-items: center; font-size: 3.2rem; overflow: hidden; }
     .trip .banner img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 75%; opacity: 0; transition: opacity 0.8s ease; }
     .trip .banner img.on { opacity: 1; }
-    @media (prefers-reduced-motion: reduce) { .trip .banner img { transition: none; } }
     .trip .body { padding: 18px 20px 20px; flex: 1; display: flex; flex-direction: column; gap: 6px; }
     .trip .tag {
       align-self: flex-start; font-size: 0.75rem; font-weight: 600; padding: 3px 10px; border-radius: 999px;
@@ -244,11 +243,6 @@
       .member:hover, .trip:hover, .rule:hover, .btn:hover, .trip:hover .banner img { transform: none; }
     }
 
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation: none !important; transition: none !important; }
-      .reveal { opacity: 1; transform: none; }
-      .plane, .float { display: none; }
-    }
   </style>
 </head>
 <body>
@@ -457,8 +451,6 @@
     }
 
     // ===== Animations =====
-    const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
-
     // Title letters pop in one by one
     const h1 = document.querySelector(".hero h1");
     h1.setAttribute("aria-label", h1.textContent);
@@ -479,7 +471,7 @@
     // Cards slide up as they scroll into view; section titles draw their underline
     const titles = document.querySelectorAll(".section-title");
     const pieces = document.querySelectorAll(".next-trip, .member, .rule");
-    if (reduceMotion || !("IntersectionObserver" in window)) {
+    if (!("IntersectionObserver" in window)) {
       titles.forEach(t => t.classList.add("drawn"));
     } else {
       pieces.forEach(el => {
@@ -507,7 +499,6 @@
 
     // Tap the next-trip box for a confetti burst
     box.addEventListener("click", e => {
-      if (reduceMotion) return;
       const icons = ["🎉", "✨", "🌿", "🎒", "📸", "🥳"];
       for (let i = 0; i < 24; i++) {
         const s = document.createElement("span");
