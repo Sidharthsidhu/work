@@ -419,10 +419,11 @@
 
     document.getElementById("insta-link").href = INSTAGRAM_URL;
 
-    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const startOfToday = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
     const parse = d => new Date(d + "T00:00:00");
     const fmt = d => d ? parse(d).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }) : "Date to be decided";
-    const isUpcoming = t => t.date ? parse(t.date) >= today : !!t.upcoming;
+    // A trip stays Upcoming through its date and becomes Done the day after
+    const isUpcoming = t => t.date ? parse(t.date) >= startOfToday() : !!t.upcoming;
     const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
     // Newest first; trips without a date yet go on top
     const newest = (a, b) => ((b.date ? parse(b.date).getTime() : Infinity) - (a.date ? parse(a.date).getTime() : Infinity)) || 0;
@@ -451,7 +452,7 @@
             <h3>${esc(t.title)}</h3>
             <div class="date">📍 ${esc(t.place)} · ${fmt(t.date)}</div>
             <p>${esc(t.note)}</p>
-            ${t.local ? `<div class="trip-local"><span>📱 Saved on this device</span><button type="button" class="trip-del" data-id="${esc(t.id)}">Remove</button></div>` : ""}
+            ${t.local ? `<div class="trip-local"><span>📱 Saved on this device</span>${up ? `<button type="button" class="trip-del" data-id="${esc(t.id)}">Remove</button>` : ""}</div>` : ""}
           </div>
         </article>`;
       }).join("") || `<p style="text-align:center;color:var(--muted)">Nothing here yet — time to plan one!</p>`;
@@ -809,12 +810,23 @@
         return;
       }
       const id = btn.dataset.id;
+      const trip = trips.find(t => t.local && t.id === id);
+      if (!trip || !isUpcoming(trip)) return; // completed trips can't be removed
       try {
         storeSaved(loadSaved().filter(t => String(t.id) !== id));
       } catch {}
-      trips.splice(trips.findIndex(t => t.local && t.id === id), 1);
+      trips.splice(trips.indexOf(trip), 1);
       refreshTrips();
     });
+
+    // If the page stays open past midnight, move trips whose date has passed to Done
+    let shownDay = new Date().toDateString();
+    setInterval(() => {
+      const day = new Date().toDateString();
+      if (day === shownDay) return;
+      shownDay = day;
+      refreshTrips();
+    }, 60000);
   </script>
 </body>
 </html>
