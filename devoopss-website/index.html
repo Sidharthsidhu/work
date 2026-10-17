@@ -100,8 +100,9 @@
     .member { padding: 22px 14px; text-align: center; }
     .avatar {
       width: 76px; height: 76px; border-radius: 50%; margin: 0 auto 12px;
-      display: grid; place-items: center; font-size: 2rem;
+      display: grid; place-items: center; font-size: 2rem; overflow: hidden;
     }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; }
     .member h3 { font-size: 1.15rem; }
     .member .role { color: var(--muted); font-size: 0.9rem; }
 
@@ -218,12 +219,13 @@
   <script>
     // ====== EDIT THIS PART ======
     // Change names, emojis and trips here. Dates use YYYY-MM-DD.
+    // To show a photo instead of an emoji, put it in the photos/ folder and add photo: "photos/name.jpg".
 
     const INSTAGRAM_URL = "https://www.instagram.com/dev_oopss/";
 
     const crew = [
       { name: "Sidharth", role: "Trip planner",     emoji: "🗺️", color: "#ffd6c9" },
-      { name: "Akhil", role: "Photographer &amp; reel maker",      emoji: "📸", color: "#d4f0ec" },
+      { name: "Akhil", role: "Photographer &amp; reel maker",      emoji: "📸", color: "#d4f0ec", photo: "photos/akhil.jpg" },
       { name: "Avani", role: "Food hunter",      emoji: "🍜", color: "#ffe6b3" },
       { name: "Anjana", role: "Vlogger",     emoji: "🎥", color: "#e3dcff" },
       { name: "Seetha", role: "Financer",    emoji: "🏦", color: "#ffd1dc" },
@@ -254,7 +256,7 @@
 
     document.getElementById("crew-list").innerHTML = crew.map(m => `
       <div class="card member">
-        <div class="avatar" style="background:${m.color}">${m.emoji}</div>
+        <div class="avatar" style="background:${m.color}">${m.photo ? `<img src="${m.photo}" alt="${m.name}">` : m.emoji}</div>
         <h3>${m.name}</h3>
         <div class="role">${m.role}</div>
       </div>`).join("");
