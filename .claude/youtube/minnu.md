@@ -21,6 +21,6 @@ and a pink-and-white bead bracelet on one wrist. Photorealistic, soft warm light
 
 ## Format
 - Vertical 9:16, 1080x1920, 8-15 seconds
-- Coco centred, close-up, nothing important at the edges
+- Minnu centred, close-up, nothing important at the edges
 - Name tag "Minnu 🐒✨" top-left (bottom-right is covered by the Shorts buttons and title)
 - Sings in Malayalam
