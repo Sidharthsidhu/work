@@ -1,0 +1,33 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../_shared/style.css">
+<style>
+  .row { grid-template-columns: 50px 250px 1fr; padding: 15px 22px; }
+  .row h2 { font-size: 23px; }
+  .prompt { background: #eef2ff; border-radius: 12px; padding: 12px 16px; font-size: 18px; line-height: 1.4; color: var(--ink); position: relative; }
+  .prompt::before { content: "PROMPT"; display: block; font-size: 13px; font-weight: 800; letter-spacing: 2px; color: var(--purple); margin-bottom: 4px; }
+  .rule { padding: 18px 24px; font-size: 21px; border-left: 8px solid var(--red); color: var(--muted); }
+  .rule b { color: var(--ink); }
+</style></head>
+<body>
+  <div class="top">
+    <div>
+      <div class="kicker">AI for .NET developers</div>
+      <h1>6 prompts that work<br><span>for .NET with Claude</span></h1>
+      <div class="sub">Copy them, then add your own code and context.</div>
+    </div>
+    <div class="badge">AI<small>.NET</small></div>
+  </div>
+  <div class="main" style="gap:11px">
+    <div class="card row" style="--c:var(--purple)"><div class="num">1</div><div><h2>Understand old code</h2><p>Legacy VB.NET or C#</p></div><div class="prompt">Explain what this method does step by step, and list anything that could fail at runtime.</div></div>
+    <div class="card row" style="--c:var(--blue)"><div class="num">2</div><div><h2>Write SQL</h2><p>Queries &amp; procedures</p></div><div class="prompt">Here are my tables: [schema]. Write a SQL Server query that returns [result]. Explain each join.</div></div>
+    <div class="card row" style="--c:var(--green)"><div class="num">3</div><div><h2>Debug an error</h2><p>Stack traces</p></div><div class="prompt">I get this error: [error + stack trace]. Here's the code: [code]. What are the likely causes, most likely first?</div></div>
+    <div class="card row" style="--c:var(--amber)"><div class="num">4</div><div><h2>Write tests</h2><p>Edge cases included</p></div><div class="prompt">Write unit tests for this method. Cover nulls, empty lists and boundary values.</div></div>
+    <div class="card row" style="--c:var(--red)"><div class="num">5</div><div><h2>Review my code</h2><p>Before the PR</p></div><div class="prompt">Review this code like a senior .NET developer. Point out bugs, security issues and anything hard to maintain.</div></div>
+    <div class="card row" style="--c:var(--teal)"><div class="num">6</div><div><h2>Plan a feature</h2><p>Before writing code</p></div><div class="prompt">I'm building [feature] in ASP.NET MVC. Suggest the models, controller actions and views. Don't write code yet.</div></div>
+    <div class="card rule"><b>The rule:</b> AI drafts it. <b>You read every line and test it</b> before it ships.</div>
+  </div>
+  <div class="foot">
+    <div><b>Sidharth K</b> · .NET developer who builds with AI</div>
+    <div class="pill">Save for later</div>
+  </div>
+</body></html>

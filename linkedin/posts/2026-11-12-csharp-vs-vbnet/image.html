@@ -1,0 +1,50 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../_shared/style.css">
+<style>
+  .hdr { display: grid; grid-template-columns: 170px 1fr 1fr; gap: 14px; padding: 0 16px; font-size: 22px; font-weight: 800; }
+  .hdr .cs { color: var(--purple); } .hdr .vb { color: var(--teal); }
+  .row { grid-template-columns: 170px 1fr 1fr; gap: 14px; padding: 12px 16px; border-left: none; }
+  .what { font-size: 20px; font-weight: 800; }
+  pre { font-size: 16px; padding: 10px 14px; }
+  pre.vb { background: #0b3b38; }
+  .tip { padding: 18px 24px; font-size: 20px; color: var(--muted); line-height: 1.4; border-left: 8px solid var(--amber); }
+  .tip b { color: var(--ink); }
+</style></head>
+<body>
+  <div class="top">
+    <div>
+      <div class="kicker">One language, two spellings</div>
+      <h1>C# vs VB.NET<br><span>side by side</span></h1>
+      <div class="sub">Same .NET, same libraries. Only the syntax changes.</div>
+    </div>
+    <div class="badge">C#<small>VB</small></div>
+  </div>
+  <div class="main" style="gap:10px">
+    <div class="hdr"><div></div><div class="cs">C#</div><div class="vb">VB.NET</div></div>
+    <div class="card row"><div class="what">Variable</div><pre><span class="k">int</span> count = <span class="n">0</span>;</pre><pre class="vb"><span class="k">Dim</span> count <span class="k">As Integer</span> = <span class="n">0</span></pre></div>
+    <div class="card row"><div class="what">If</div><pre><span class="k">if</span> (age &gt;= <span class="n">18</span> &amp;&amp; ok)
+{
+    Approve();
+}</pre><pre class="vb"><span class="k">If</span> age &gt;= <span class="n">18</span> <span class="k">AndAlso</span> ok <span class="k">Then</span>
+    Approve()
+<span class="k">End If</span></pre></div>
+    <div class="card row"><div class="what">Loop</div><pre><span class="k">for</span> (<span class="k">int</span> i = <span class="n">0</span>; i &lt; <span class="n">10</span>; i++)</pre><pre class="vb"><span class="k">For</span> i <span class="k">As Integer</span> = <span class="n">0</span> <span class="k">To</span> <span class="n">9</span></pre></div>
+    <div class="card row"><div class="what">Null check</div><pre><span class="k">if</span> (user == <span class="k">null</span>)</pre><pre class="vb"><span class="k">If</span> user <span class="k">Is Nothing Then</span></pre></div>
+    <div class="card row"><div class="what">Not equal</div><pre>a != b</pre><pre class="vb">a &lt;&gt; b</pre></div>
+    <div class="card row"><div class="what">Property</div><pre><span class="k">public string</span> Name { <span class="k">get</span>; <span class="k">set</span>; }</pre><pre class="vb"><span class="k">Public Property</span> Name <span class="k">As String</span></pre></div>
+    <div class="card row"><div class="what">Method</div><pre><span class="k">public int</span> Add(<span class="k">int</span> a, <span class="k">int</span> b)
+{
+    <span class="k">return</span> a + b;
+}</pre><pre class="vb"><span class="k">Public Function</span> Add(a <span class="k">As Integer</span>,
+    b <span class="k">As Integer</span>) <span class="k">As Integer</span>
+    <span class="k">Return</span> a + b
+<span class="k">End Function</span></pre></div>
+    <div class="card row"><div class="what">No return value</div><pre><span class="k">public void</span> Save()</pre><pre class="vb"><span class="k">Public Sub</span> Save()</pre></div>
+    <div class="card row"><div class="what">Comment</div><pre><span class="c">// a comment</span></pre><pre class="vb"><span class="c">' a comment</span></pre></div>
+    <div class="card tip"><b>Watch out:</b> use <b>AndAlso / OrElse</b> in VB.NET. Plain And / Or check both sides every time.</div>
+  </div>
+  <div class="foot">
+    <div><b>Sidharth K</b> · .NET developer who builds with AI</div>
+    <div class="pill">Save for later</div>
+  </div>
+</body></html>

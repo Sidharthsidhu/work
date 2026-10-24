@@ -1,0 +1,99 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../_shared/style.css">
+<style>
+  .grid2 { gap: 14px; flex: 1; }
+  .box { padding: 18px 20px; border-top: 7px solid var(--c); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; }
+  .box h2 { font-size: 28px; color: var(--c); }
+  .box p { font-size: 19px; margin: 0; }
+  pre { font-size: 16px; padding: 10px 14px; text-align: left; width: 100%; }
+  .legend { padding: 14px 22px; font-size: 19px; color: var(--muted); display: flex; gap: 28px; justify-content: center; }
+  .legend b { color: var(--ink); }
+</style></head>
+<body>
+  <div class="top">
+    <div>
+      <div class="kicker">SQL Server</div>
+      <h1>SQL joins<br><span>explained visually</span></h1>
+      <div class="sub">The shaded part is what each join returns.</div>
+    </div>
+    <div class="badge">SQL</div>
+  </div>
+  <div class="main">
+    <div class="card legend"><span><b>A</b> = Customers</span><span><b>B</b> = Orders</span><span>joined on <b>CustomerId</b></span></div>
+    <div class="grid2">
+      <div class="card box" style="--c:var(--purple)"><svg viewBox="0 0 200 120" width="250" height="150">
+  <defs>
+    <clipPath id="La"><circle cx="75" cy="60" r="48"/></clipPath>
+    <mask id="mLa"><rect width="200" height="120" fill="#fff"/><circle cx="125" cy="60" r="48" fill="#000"/></mask>
+    <mask id="mRa"><rect width="200" height="120" fill="#fff"/><circle cx="75" cy="60" r="48" fill="#000"/></mask>
+  </defs>
+  
+  
+  <circle cx="125" cy="60" r="48" fill="#8b6cf0" clip-path="url(#La)"/>
+  <circle cx="75" cy="60" r="48" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+  <circle cx="125" cy="60" r="48" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+  <text x="48" y="66" font-size="20" font-weight="800" fill="#0f172a">A</text>
+  <text x="140" y="66" font-size="20" font-weight="800" fill="#0f172a">B</text>
+</svg><h2>INNER JOIN</h2><p>Only customers <b>with</b> orders</p>
+<pre><span class="k">SELECT</span> * <span class="k">FROM</span> Customers c
+<span class="k">INNER JOIN</span> Orders o
+  <span class="k">ON</span> o.CustomerId = c.Id</pre></div>
+      <div class="card box" style="--c:var(--blue)"><svg viewBox="0 0 200 120" width="250" height="150">
+  <defs>
+    <clipPath id="Lb"><circle cx="75" cy="60" r="48"/></clipPath>
+    <mask id="mLb"><rect width="200" height="120" fill="#fff"/><circle cx="125" cy="60" r="48" fill="#000"/></mask>
+    <mask id="mRb"><rect width="200" height="120" fill="#fff"/><circle cx="75" cy="60" r="48" fill="#000"/></mask>
+  </defs>
+  <circle cx="75" cy="60" r="48" fill="#5cc8f2" mask="url(#mLb)"/>
+  
+  <circle cx="125" cy="60" r="48" fill="#5cc8f2" clip-path="url(#Lb)"/>
+  <circle cx="75" cy="60" r="48" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+  <circle cx="125" cy="60" r="48" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+  <text x="48" y="66" font-size="20" font-weight="800" fill="#0f172a">A</text>
+  <text x="140" y="66" font-size="20" font-weight="800" fill="#0f172a">B</text>
+</svg><h2>LEFT JOIN</h2><p><b>All</b> customers, orders if any</p>
+<pre><span class="k">SELECT</span> * <span class="k">FROM</span> Customers c
+<span class="k">LEFT JOIN</span> Orders o
+  <span class="k">ON</span> o.CustomerId = c.Id</pre></div>
+      <div class="card box" style="--c:var(--green)"><svg viewBox="0 0 200 120" width="250" height="150">
+  <defs>
+    <clipPath id="Lc"><circle cx="75" cy="60" r="48"/></clipPath>
+    <mask id="mLc"><rect width="200" height="120" fill="#fff"/><circle cx="125" cy="60" r="48" fill="#000"/></mask>
+    <mask id="mRc"><rect width="200" height="120" fill="#fff"/><circle cx="75" cy="60" r="48" fill="#000"/></mask>
+  </defs>
+  
+  <circle cx="125" cy="60" r="48" fill="#5fd08a" mask="url(#mRc)"/>
+  <circle cx="125" cy="60" r="48" fill="#5fd08a" clip-path="url(#Lc)"/>
+  <circle cx="75" cy="60" r="48" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+  <circle cx="125" cy="60" r="48" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+  <text x="48" y="66" font-size="20" font-weight="800" fill="#0f172a">A</text>
+  <text x="140" y="66" font-size="20" font-weight="800" fill="#0f172a">B</text>
+</svg><h2>RIGHT JOIN</h2><p><b>All</b> orders, customer if any</p>
+<pre><span class="k">SELECT</span> * <span class="k">FROM</span> Customers c
+<span class="k">RIGHT JOIN</span> Orders o
+  <span class="k">ON</span> o.CustomerId = c.Id</pre></div>
+      <div class="card box" style="--c:var(--amber)"><svg viewBox="0 0 200 120" width="250" height="150">
+  <defs>
+    <clipPath id="Ld"><circle cx="75" cy="60" r="48"/></clipPath>
+    <mask id="mLd"><rect width="200" height="120" fill="#fff"/><circle cx="125" cy="60" r="48" fill="#000"/></mask>
+    <mask id="mRd"><rect width="200" height="120" fill="#fff"/><circle cx="75" cy="60" r="48" fill="#000"/></mask>
+  </defs>
+  <circle cx="75" cy="60" r="48" fill="#f8c35c" mask="url(#mLd)"/>
+  <circle cx="125" cy="60" r="48" fill="#f8c35c" mask="url(#mRd)"/>
+  <circle cx="125" cy="60" r="48" fill="#f8c35c" clip-path="url(#Ld)"/>
+  <circle cx="75" cy="60" r="48" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+  <circle cx="125" cy="60" r="48" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+  <text x="48" y="66" font-size="20" font-weight="800" fill="#0f172a">A</text>
+  <text x="140" y="66" font-size="20" font-weight="800" fill="#0f172a">B</text>
+</svg><h2>FULL OUTER JOIN</h2><p><b>Everything</b> from both sides</p>
+<pre><span class="k">SELECT</span> * <span class="k">FROM</span> Customers c
+<span class="k">FULL OUTER JOIN</span> Orders o
+  <span class="k">ON</span> o.CustomerId = c.Id</pre></div>
+    </div>
+    <div class="card legend" style="border-left:8px solid var(--red)"><span><b>Tip:</b> customers with no orders? <b>LEFT JOIN</b> + <code>WHERE o.Id IS NULL</code></span></div>
+  </div>
+  <div class="foot">
+    <div><b>Sidharth K</b> · .NET developer who builds with AI</div>
+    <div class="pill">Save for later</div>
+  </div>
+</body></html>

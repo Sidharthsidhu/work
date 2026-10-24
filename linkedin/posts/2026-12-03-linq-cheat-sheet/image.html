@@ -1,0 +1,37 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../_shared/style.css">
+<style>
+  .grid2 { gap: 12px; flex: 1; }
+  .box { padding: 16px 18px; border-top: 7px solid var(--c); display: flex; flex-direction: column; justify-content: center; gap: 10px; }
+  .box h2 { font-size: 26px; font-family: "DejaVu Sans Mono", Consolas, monospace; color: var(--c); }
+  .box p { font-size: 19px; margin: 0; }
+  pre { font-size: 17px; padding: 12px 14px; }
+</style></head>
+<body>
+  <div class="top">
+    <div>
+      <div class="kicker">C# · LINQ</div>
+      <h1>LINQ cheat sheet<br><span>10 methods, 1 list</span></h1>
+      <div class="sub">Every example works on the same list: <span class="chip">List&lt;Order&gt; orders</span></div>
+    </div>
+    <div class="badge">.NET<small>C#</small></div>
+  </div>
+  <div class="main">
+    <div class="grid2">
+      <div class="card box" style="--c:var(--purple)"><h2>Where</h2><p>Keep items that match</p><pre>orders.Where(o =&gt; o.Total &gt; <span class="n">1000</span>)</pre></div>
+      <div class="card box" style="--c:var(--purple)"><h2>Select</h2><p>Pick or reshape fields</p><pre>orders.Select(o =&gt; o.CustomerName)</pre></div>
+      <div class="card box" style="--c:var(--blue)"><h2>OrderBy</h2><p>Sort (ThenBy for a 2nd key)</p><pre>orders.OrderByDescending(o =&gt; o.Date)</pre></div>
+      <div class="card box" style="--c:var(--blue)"><h2>FirstOrDefault</h2><p>First match, or null</p><pre>orders.FirstOrDefault(o =&gt; o.Id == id)</pre></div>
+      <div class="card box" style="--c:var(--green)"><h2>Any</h2><p>Is there at least one?</p><pre>orders.Any(o =&gt; o.Status == <span class="s">"Late"</span>)</pre></div>
+      <div class="card box" style="--c:var(--green)"><h2>Count</h2><p>How many match?</p><pre>orders.Count(o =&gt; o.IsPaid)</pre></div>
+      <div class="card box" style="--c:var(--amber)"><h2>Sum</h2><p>Add up a number field</p><pre>orders.Sum(o =&gt; o.Total)</pre></div>
+      <div class="card box" style="--c:var(--amber)"><h2>GroupBy</h2><p>Bucket items by a key</p><pre>orders.GroupBy(o =&gt; o.CustomerId)</pre></div>
+      <div class="card box" style="--c:var(--red)"><h2>Distinct</h2><p>Remove duplicates</p><pre>orders.Select(o =&gt; o.City).Distinct()</pre></div>
+      <div class="card box" style="--c:var(--red)"><h2>ToList</h2><p>Run the query now</p><pre>orders.Where(...).ToList()</pre></div>
+    </div>
+  </div>
+  <div class="foot">
+    <div><b>Sidharth K</b> · .NET developer who builds with AI</div>
+    <div class="pill">Save for later</div>
+  </div>
+</body></html>

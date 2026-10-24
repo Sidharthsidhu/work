@@ -1,0 +1,40 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="../_shared/style.css">
+<style>
+  .row { grid-template-columns: 96px 1fr 360px; padding: 13px 22px; }
+  .code { font-size: 34px; font-weight: 800; color: var(--c); }
+  .row h2 { font-size: 23px; } .row p { font-size: 17px; }
+  pre { font-size: 17px; padding: 10px 14px; }
+  .grp { font-size: 17px; font-weight: 800; letter-spacing: 2px; color: var(--c); margin: 6px 0 -4px 4px; }
+  .rule { padding: 18px 24px; display: flex; justify-content: space-around; font-size: 22px; font-weight: 700; }
+  .rule span b { font-size: 26px; }
+</style></head>
+<body>
+  <div class="top">
+    <div>
+      <div class="kicker">ASP.NET Core Web API</div>
+      <h1>API status codes<br><span>and what to return</span></h1>
+      <div class="sub">The 9 codes you'll use most, with the C# line for each.</div>
+    </div>
+    <div class="badge">.NET<small>C#</small></div>
+  </div>
+  <div class="main" style="gap:10px">
+    <div class="grp" style="--c:var(--green)">2XX · IT WORKED</div>
+    <div class="card row" style="--c:var(--green)"><div class="code">200</div><div><h2>OK</h2><p>Request worked, here's the data</p></div><pre><span class="k">return</span> Ok(product);</pre></div>
+    <div class="card row" style="--c:var(--green)"><div class="code">201</div><div><h2>Created</h2><p>New record saved</p></div><pre><span class="k">return</span> CreatedAtAction(
+  <span class="k">nameof</span>(Get), <span class="k">new</span> { id }, item);</pre></div>
+    <div class="card row" style="--c:var(--green)"><div class="code">204</div><div><h2>No Content</h2><p>Done, nothing to send back</p></div><pre><span class="k">return</span> NoContent();</pre></div>
+    <div class="grp" style="--c:var(--amber)">4XX · THE CALLER GOT SOMETHING WRONG</div>
+    <div class="card row" style="--c:var(--amber)"><div class="code">400</div><div><h2>Bad Request</h2><p>Invalid input</p></div><pre><span class="k">return</span> BadRequest(ModelState);</pre></div>
+    <div class="card row" style="--c:var(--amber)"><div class="code">401</div><div><h2>Unauthorized</h2><p>Not logged in</p></div><pre><span class="k">return</span> Unauthorized();</pre></div>
+    <div class="card row" style="--c:var(--amber)"><div class="code">403</div><div><h2>Forbidden</h2><p>Logged in, but not allowed</p></div><pre><span class="k">return</span> Forbid();</pre></div>
+    <div class="card row" style="--c:var(--amber)"><div class="code">404</div><div><h2>Not Found</h2><p>That record doesn't exist</p></div><pre><span class="k">return</span> NotFound();</pre></div>
+    <div class="card row" style="--c:var(--amber)"><div class="code">409</div><div><h2>Conflict</h2><p>Clashes with existing data</p></div><pre><span class="k">return</span> Conflict(<span class="s">"Email in use"</span>);</pre></div>
+    <div class="grp" style="--c:var(--red)">5XX · THE SERVER GOT SOMETHING WRONG</div>
+    <div class="card row" style="--c:var(--red)"><div class="code">500</div><div><h2>Server Error</h2><p>Something broke on our side</p></div><pre><span class="k">return</span> StatusCode(<span class="n">500</span>);</pre></div>
+  </div>
+  <div class="foot">
+    <div><b>Sidharth K</b> · .NET developer who builds with AI</div>
+    <div class="pill">Save for later</div>
+  </div>
+</body></html>
