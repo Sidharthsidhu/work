@@ -1,0 +1,139 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #0f172a; --muted: #475569; --bg: #f4f6fb; --card: #fff;
+    --purple: #512bd4; --blue: #0ea5e9; --green: #16a34a; --amber: #f59e0b; --red: #e11d48;
+  }
+  body {
+    width: 1080px; height: 1350px; background: var(--bg); color: var(--ink);
+    font-family: "Segoe UI", "DejaVu Sans", Arial, sans-serif;
+    padding: 56px 60px 40px; display: flex; flex-direction: column;
+  }
+  .kicker { font-size: 22px; font-weight: 700; letter-spacing: 3px; color: var(--purple); }
+  h1 { font-size: 66px; line-height: 1.04; font-weight: 800; margin-top: 10px; }
+  h1 span { color: var(--purple); }
+  .sub { font-size: 26px; color: var(--muted); margin-top: 14px; }
+
+  /* flow */
+  .flow { margin-top: 50px; display: flex; align-items: stretch; gap: 0; }
+  .step {
+    flex: 1; background: var(--card); border-radius: 18px; padding: 22px 14px 20px;
+    text-align: center; box-shadow: 0 2px 8px rgba(15,23,42,.06); border-top: 8px solid var(--c);
+  }
+  .icon {
+    width: 76px; height: 76px; border-radius: 20px; margin: 0 auto;
+    background: var(--c); display: flex; align-items: center; justify-content: center;
+  }
+  .icon svg { width: 44px; height: 44px; stroke: #fff; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .step .n { font-size: 17px; font-weight: 800; color: var(--c); margin-top: 14px; letter-spacing: 1px; }
+  .step h3 { font-size: 26px; font-weight: 800; margin-top: 4px; }
+  .step p { font-size: 17.5px; color: var(--muted); margin-top: 6px; line-height: 1.3; }
+  .arrow { width: 34px; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 34px; font-weight: 800; }
+
+  /* before/after */
+  .ba { margin-top: 40px; background: var(--card); border-radius: 22px; padding: 26px 28px; box-shadow: 0 2px 8px rgba(15,23,42,.06); }
+  .ba-head { display: flex; justify-content: space-between; font-size: 20px; font-weight: 800; letter-spacing: 2px; color: var(--muted); }
+  .ba-head .r { color: var(--green); }
+  .ba-body { display: grid; grid-template-columns: 1fr 70px 1fr; align-items: center; margin-top: 16px; }
+  .doc {
+    background: #fff; border: 2px solid #e2e8f0; border-radius: 12px; padding: 20px 22px; position: relative;
+    font-size: 20px; line-height: 1.7;
+  }
+  .doc .tag { position: absolute; top: -14px; right: 16px; background: var(--red); color: #fff; font-size: 15px; font-weight: 800; padding: 3px 10px; border-radius: 6px; }
+  .doc .title { font-weight: 800; font-size: 22px; margin-bottom: 6px; }
+  .doc .row { display: flex; justify-content: space-between; color: var(--muted); }
+  .doc .row b { color: var(--ink); }
+  .doc .line { height: 10px; background: #e2e8f0; border-radius: 5px; margin-top: 10px; }
+  .big-arrow { text-align: center; font-size: 46px; color: var(--purple); font-weight: 800; }
+  pre {
+    background: var(--ink); color: #e2e8f0; border-radius: 12px; padding: 20px 22px;
+    font-family: "Cascadia Code", "DejaVu Sans Mono", Consolas, monospace; font-size: 19px; line-height: 1.6;
+  }
+  .k { color: #82aaff; } .s { color: #c3e88d; } .num { color: #f78c6c; }
+  .note { font-size: 16px; color: #94a3b8; margin-top: 10px; text-align: center; }
+
+  /* lessons */
+  .lessons { margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .lesson { background: var(--card); border-radius: 18px; padding: 22px 24px; border-left: 8px solid var(--c); box-shadow: 0 2px 8px rgba(15,23,42,.06); }
+  .lesson .lbl { font-size: 16px; font-weight: 800; letter-spacing: 2px; color: var(--c); }
+  .lesson h4 { font-size: 30px; font-weight: 800; margin-top: 6px; line-height: 1.15; }
+  .lesson p { font-size: 21px; color: var(--muted); margin-top: 8px; line-height: 1.35; }
+
+  .foot { margin-top: auto; display: flex; justify-content: space-between; align-items: center; font-size: 22px; color: var(--muted); }
+  .foot b { color: var(--ink); }
+  .pill { background: var(--purple); color: #fff; padding: 10px 20px; border-radius: 999px; font-weight: 700; font-size: 20px; }
+</style>
+</head>
+<body>
+  <div class="kicker">AI + .NET · A FEATURE I BUILT</div>
+  <h1>No more typing data<br><span>from PDFs by hand</span></h1>
+  <div class="sub">How my PDF &amp; image extraction feature works, in 4 steps.</div>
+
+  <div class="flow">
+    <div class="step" style="--c:var(--blue)">
+      <div class="icon"><svg viewBox="0 0 24 24"><path d="M12 16V4"/><path d="M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg></div>
+      <div class="n">STEP 1</div><h3>Upload</h3><p>A PDF or an image goes in</p>
+    </div>
+    <div class="arrow">›</div>
+    <div class="step" style="--c:var(--purple)">
+      <div class="icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/><path d="M9 11h4M11 9v4"/></svg></div>
+      <div class="n">STEP 2</div><h3>AI reads it</h3><p>Finds the data that matters</p>
+    </div>
+    <div class="arrow">›</div>
+    <div class="step" style="--c:var(--amber)">
+      <div class="icon"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+      <div class="n">STEP 3</div><h3>Check</h3><p>Output is checked before use</p>
+    </div>
+    <div class="arrow">›</div>
+    <div class="step" style="--c:var(--green)">
+      <div class="icon"><svg viewBox="0 0 24 24"><path d="M8 4H7a2 2 0 0 0-2 2v4l-2 2 2 2v4a2 2 0 0 0 2 2h1"/><path d="M16 4h1a2 2 0 0 1 2 2v4l2 2-2 2v4a2 2 0 0 1-2 2h-1"/></svg></div>
+      <div class="n">STEP 4</div><h3>JSON</h3><p>Clean data the app uses directly</p>
+    </div>
+  </div>
+
+  <div class="ba">
+    <div class="ba-head"><span>WHAT GOES IN</span><span class="r">WHAT COMES OUT</span></div>
+    <div class="ba-body">
+      <div class="doc">
+        <div class="tag">PDF</div>
+        <div class="title">INVOICE</div>
+        <div class="row"><span>Invoice no.</span><b>INV-1042</b></div>
+        <div class="row"><span>Date</span><b>12 Oct 2026</b></div>
+        <div class="row"><span>Customer</span><b>ABC Traders</b></div>
+        <div class="row"><span>Total</span><b>₹ 18,500</b></div>
+        <div class="line"></div><div class="line" style="width:70%"></div>
+      </div>
+      <div class="big-arrow">→</div>
+<pre>{
+  <span class="k">"invoiceNo"</span>: <span class="s">"INV-1042"</span>,
+  <span class="k">"date"</span>: <span class="s">"2026-10-12"</span>,
+  <span class="k">"customer"</span>: <span class="s">"ABC Traders"</span>,
+  <span class="k">"total"</span>: <span class="num">18500</span>
+}</pre>
+    </div>
+    <div class="note">Example document for illustration</div>
+  </div>
+
+  <div class="lessons">
+    <div class="lesson" style="--c:var(--green)">
+      <div class="lbl">LESSON 1</div>
+      <h4>JSON is the real hero</h4>
+      <p>Once the data has a fixed shape, every other module can trust it.</p>
+    </div>
+    <div class="lesson" style="--c:var(--amber)">
+      <div class="lbl">LESSON 2</div>
+      <h4>Don't trust AI blindly</h4>
+      <p>Check the output before the rest of the system relies on it.</p>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div><b>Sidharth K</b> · .NET developer who builds with AI</div>
+    <div class="pill">ASP.NET MVC + AI</div>
+  </div>
+</body>
+</html>
